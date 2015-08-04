@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2014 ForgeRock AS.
+ * Portions Copyrighted 2015 Evolveum
  */
 package org.identityconnectors.framework.common.objects;
 
@@ -145,7 +146,7 @@ public final class ConnectorObjectBuilder {
         addAttribute(AttributeBuilder.build(name, obj));
         return this;
     }
-
+    
     // =======================================================================
     // Build Out..
     // =======================================================================

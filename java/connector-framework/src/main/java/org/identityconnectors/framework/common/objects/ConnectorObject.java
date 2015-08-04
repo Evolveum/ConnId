@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2014 ForgeRock AS.
+ * Portions Copyrighted 2015 Evolveum
  */
 package org.identityconnectors.framework.common.objects;
 
@@ -47,19 +48,19 @@ public final class ConnectorObject {
      * @throws IllegalArgumentException
      *             if {@link Name} or {@link Uid} is missing from the set.
      */
-    public ConnectorObject(ObjectClass objectClass, Set<? extends Attribute> set) {
+    public ConnectorObject(ObjectClass objectClass, Set<? extends Attribute> attributes) {
         if (objectClass == null) {
             throw new IllegalArgumentException("ObjectClass may not be null");
         }
         if (ObjectClass.ALL.equals(objectClass)) {
             throw new IllegalArgumentException("Connector object class can not be type of __ALL__");
         }
-        if (set == null || set.size() == 0) {
+        if (attributes == null || attributes.size() == 0) {
             throw new IllegalArgumentException("The set can not be null or empty.");
         }
         this.objectClass = objectClass;
         // create an easy look map..
-        this.attributeMap = AttributeUtil.toMap(set);
+        this.attributeMap = AttributeUtil.toMap(attributes);
         // make sure the Uid was added..
         if (!this.attributeMap.containsKey(Uid.NAME)) {
             throw new IllegalArgumentException("The Attribute set must contain a 'Uid'.");
@@ -112,12 +113,14 @@ public final class ConnectorObject {
 
     /**
      * Gets the {@link ObjectClass} for this object.
+     * This is the "structural" object class. The primary object class that defines
+     * basic object structure. It cannot be null.
      */
     public ObjectClass getObjectClass() {
         return objectClass;
     }
 
-    @Override
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof ConnectorObject) {
             ConnectorObject other = (ConnectorObject) obj;
