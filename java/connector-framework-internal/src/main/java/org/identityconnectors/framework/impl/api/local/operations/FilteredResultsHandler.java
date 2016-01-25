@@ -20,22 +20,27 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2014 ForgeRock AS.
+ * Portions Copyrighted 2015 ConnId
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
 import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.ResultsHandler;
+import org.identityconnectors.framework.common.objects.SearchResult;
 import org.identityconnectors.framework.common.objects.filter.Filter;
 import org.identityconnectors.framework.common.objects.filter.FilterVisitor;
+import org.identityconnectors.framework.spi.SearchResultsHandler;
 
-public final class FilteredResultsHandler implements ResultsHandler {
+public final class FilteredResultsHandler implements SearchResultsHandler {
 
     // =======================================================================
     // Fields
     // =======================================================================
-    final ResultsHandler handler;
-    final Filter filter;
-    final boolean inValidationMode;
+    private final ResultsHandler handler;
+
+    private final Filter filter;
+
+    private final boolean inValidationMode;
 
     // =======================================================================
     // Constructors
@@ -43,16 +48,14 @@ public final class FilteredResultsHandler implements ResultsHandler {
     /**
      * Filter chain for producers.
      *
-     * @param handler
-     *            Producer to filter.
-     * @param filter
-     *            Filter to use to accept objects.
+     * @param handler Producer to filter.
+     * @param filter Filter to use to accept objects.
      */
-    public FilteredResultsHandler(ResultsHandler handler, Filter filter) {
+    public FilteredResultsHandler(final ResultsHandler handler, final Filter filter) {
         this(handler, filter, false);
     }
 
-    public FilteredResultsHandler(ResultsHandler handler, Filter filter, boolean inValidationMode) {
+    public FilteredResultsHandler(final ResultsHandler handler, final Filter filter, final boolean inValidationMode) {
         // there must be a producer..
         if (handler == null) {
             throw new IllegalArgumentException("Handler must not be null!");
@@ -64,15 +67,24 @@ public final class FilteredResultsHandler implements ResultsHandler {
     }
 
     @Override
-    public boolean handle(ConnectorObject object) {
+    public void handleResult(final SearchResult result) {
+        if (handler instanceof SearchResultsHandler) {
+            SearchResultsHandler.class.cast(handler).handleResult(result);
+        }
+    }
+
+    @Override
+    public boolean handle(final ConnectorObject object) {
         if (filter.accept(object)) {
             return handler.handle(object);
         } else {
             if (inValidationMode) {
-                throw new IllegalStateException("Object " + object + " was returned by the connector but failed to pass the framework filter. This seems like wrong implementation of the filter in the connector.");
-            } else {
-                return true;
+                throw new IllegalStateException("Object " + object
+                        + " was returned by the connector but failed to pass "
+                        + "the framework filter. This seems like wrong implementation of the filter in the connector.");
             }
+
+            return true;
         }
     }
 
@@ -80,12 +92,14 @@ public final class FilteredResultsHandler implements ResultsHandler {
      * Use a pass through filter to use if a null filter is provided.
      */
     public static class PassThroughFilter implements Filter {
+
         @Override
-        public boolean accept(ConnectorObject obj) {
+        public boolean accept(final ConnectorObject obj) {
             return true;
         }
 
-        public <R, P> R accept(FilterVisitor<R, P> v, P p) {
+        @Override
+        public <R, P> R accept(final FilterVisitor<R, P> v, final P p) {
             return v.visitExtendedFilter(p, this);
         }
     }

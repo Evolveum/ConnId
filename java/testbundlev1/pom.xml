@@ -30,7 +30,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version>1.4.0.49</version>
+    <version>1.4.3.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>testbundlev1</artifactId>
@@ -72,5 +72,19 @@
         </configuration>
       </plugin>
     </plugins>
+      
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>../..</directory>
+        <targetPath>META-INF</targetPath>
+        <includes>
+          <include>LICENSE</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 </project>

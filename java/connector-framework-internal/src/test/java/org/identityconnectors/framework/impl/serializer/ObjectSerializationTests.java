@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2014 ForgeRock AS.
+ * Portions Copyrighted 2015 Evolveum
  */
 
 package org.identityconnectors.framework.impl.serializer;
@@ -585,6 +586,7 @@ public class ObjectSerializationTests {
         builder.setCreateable(true);
         builder.setMultiValued(true);
         builder.setUpdateable(false);
+        builder.setNativeName("FOOFOO");
         builder.setReturnedByDefault(false);
         AttributeInfo v1 = builder.build();
         AttributeInfo v2 = (AttributeInfo)cloneObject(v1);
@@ -616,6 +618,18 @@ public class ObjectSerializationTests {
 
         assertEquals(v1, v2);
     }
+    
+    @Test
+    public void testConnectorObjectAuxiliary() {
+        ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
+        bld.setUid("foo");
+        bld.setName("name");
+
+        ConnectorObject v1 = bld.build();
+        ConnectorObject v2 = (ConnectorObject)cloneObject(v1);
+
+        assertEquals(v1, v2);
+    }
 
     @Test
     public void testName() {
@@ -638,9 +652,11 @@ public class ObjectSerializationTests {
         builder.setReadable(true);
         builder.setCreateable(true);
         builder.setMultiValued(true);
+        builder.setNativeName("FOOFOO");
         ObjectClassInfoBuilder obld = new ObjectClassInfoBuilder();
         obld.addAttributeInfo(builder.build());
         obld.setContainer(true);
+        obld.setAuxiliary(true);
         ObjectClassInfo v1 = obld.build();
         ObjectClassInfo v2 = (ObjectClassInfo)cloneObject(v1);
         assertEquals(v1, v2);

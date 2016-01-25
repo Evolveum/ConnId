@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
+ * Portions Copyrighted 2015-2016 Evolveum
  */
 
 package org.identityconnectors.framework.common.objects;
@@ -119,8 +120,18 @@ public final class OperationOptions {
     public static final String OP_ATTRIBUTES_TO_GET = "ATTRS_TO_GET";
     
     /**
+     * If set to true the connector will return all the attributes that are returned
+     * by default. If ATTRS_TO_GET option was also specified, it will be understood
+     * as additional attributes to return on top of all the default attributes.
+     * If set to false (or not present) then only the attributes specified by
+     * ATTRS_TO_GET will be returned. If neither ATTRS_TO_GET nor RETURN_DEFAULT_ATTRIBUTES
+     * is present then only the default attributes will be returned.
+     */
+    public static final String OP_RETURN_DEFAULT_ATTRIBUTES = "RETURN_DEFAULT_ATTRIBUTES";
+    
+    /**
      * An option to use with {@link SearchApiOp} which specifies that the search
-     * operation may return only a reasonable subset of the results. If this option
+     * operation may return only a reasonable subset of the results (objects). If this option
      * is specified then the connector is free to sacrifice completeness in favor
      * of performance. In this case the server size limits and short-cuts may be
      * used to get a better operation performance.
@@ -128,6 +139,23 @@ public final class OperationOptions {
      * flag in SearchResult in case that partial results were returned.
      */
     public static final String OP_ALLOW_PARTIAL_RESULTS = "ALLOW_PARTIAL_RESULTS";
+    
+    /**
+     * An option to use with {@link SearchApiOp} which specifies that the search
+     * operation may return objects with partial attribute values. E.g. it may result
+     * group object with only a partial list of members (or no member list at all).
+     * This allows for a more efficient searches in cases, that the search result
+     * is only meant to be displayed in the user interface table. Composing the list
+     * of all the members of a big groups may be significant overhead and this option
+     * allows to reduce that overhead.
+     * Even if this option is specified the connector must set the 
+     * attributeValueCompleteness status in Attribute in case that partial attribute
+     * values were returned.
+     * Please note that the connector may return incomplete attributes even if
+     * this flag is NOT set. E.g. in case that the connector knows that the password
+     * is set but it cannot reveal its value.
+     */
+    public static final String OP_ALLOW_PARTIAL_ATTRIBUTE_VALUES = "ALLOW_PARTIAL_ATTRIBUTE_VALUES";
 
     /**
      * An option to use with {@link SearchApiOp} that specifies an opaque cookie
@@ -154,6 +182,7 @@ public final class OperationOptions {
      * search request.
      */
     public static final String OP_SORT_KEYS = "SORT_KEYS";
+    
 
     private final Map<String, Object> operationOptions;
 
@@ -176,7 +205,7 @@ public final class OperationOptions {
         this.operationOptions = CollectionUtil.asReadOnlyMap(operationOptionsClone);
     }
 
-    // NOTE: this method makes a heavy assumption that in OpenICF only arrays
+    // NOTE: this method makes a heavy assumption that in ConnId only arrays
     // occur as mutable values in operation options, and that there is a single
     // level of array/nesting.
     // Really would be better if OpenICF switched to List and not array
@@ -236,6 +265,14 @@ public final class OperationOptions {
     public String[] getAttributesToGet() {
         return (String[]) operationOptions.get(OP_ATTRIBUTES_TO_GET);
     }
+    
+    /**
+     * Returns the flag indicating whether to return the default attributes
+     * on top of those specified by OP_ATTRIBUTES_TO_GET.
+     */
+    public Boolean getReturnDefaultAttributes() {
+        return (Boolean) operationOptions.get(OP_RETURN_DEFAULT_ATTRIBUTES);
+    }
 
     /**
      * Get the account to run the operation as..
@@ -267,6 +304,30 @@ public final class OperationOptions {
      */
     public Boolean getAllowPartialResults() {
         return (Boolean) operationOptions.get(OP_ALLOW_PARTIAL_RESULTS);
+    };
+    
+    /**
+     * Returns a flag which specifies that the search
+     * operation may return objects with partial attribute values. E.g. it may result
+     * group object with only a partial list of members (or no member list at all).
+     * This allows for a more efficient searches in cases, that the search result
+     * is only meant to be displayed in the user interface table. Composing the list
+     * of all the members of a big groups may be significant overhead and this option
+     * allows to reduce that overhead.
+     * Even if this option is specified the connector must set the 
+     * attributeValueCompleteness status in Attribute in case that partial attribute
+     * values were returned.
+     * Please note that the connector may return incomplete attributes even if
+     * this flag is NOT set. E.g. in case that the connector knows that the password
+     * is set but it cannot reveal its value.
+     * 
+     * @return flag which specifies that the search
+     *         operation may return return objects with partial attribute values.
+     * 
+     * @since 1.4.3
+     */
+    public Boolean getAllowPartialAttributeValues() {
+        return (Boolean) operationOptions.get(OP_ALLOW_PARTIAL_ATTRIBUTE_VALUES);
     };
     
     /**
@@ -339,5 +400,5 @@ public final class OperationOptions {
     @SuppressWarnings("unchecked")
     public SortKey[] getSortKeys() {
         return (SortKey[]) operationOptions.get(OP_SORT_KEYS);
-    };
+    };    
 }
