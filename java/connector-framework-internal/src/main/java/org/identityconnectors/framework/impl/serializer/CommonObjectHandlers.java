@@ -20,10 +20,12 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
+ * Portions Copyrighted 2015-2016 Evolveum
  */
 package org.identityconnectors.framework.impl.serializer;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -87,6 +89,7 @@ class CommonObjectHandlers {
             super(clazz, typeName);
         }
 
+        @Override
         public final Object deserialize(final ObjectDecoder decoder) {
             final String name = decoder.readStringField("name", null);
             @SuppressWarnings("unchecked")
@@ -94,6 +97,7 @@ class CommonObjectHandlers {
             return createAttribute(name, value);
         }
 
+        @Override
         public final void serialize(final Object object, final ObjectEncoder encoder) {
             final Attribute val = (Attribute) object;
             encoder.writeStringField("name", val.getName());
@@ -110,11 +114,13 @@ class CommonObjectHandlers {
             super(clazz, typeName);
         }
 
+        @Override
         public Object deserialize(final ObjectDecoder decoder) {
             final String message = decoder.readStringField("message", null);
             return createException(message);
         }
 
+        @Override
         public void serialize(final Object object, final ObjectEncoder encoder) {
             final Throwable val = (Throwable) object;
             encoder.writeStringField("message", val.getMessage());
@@ -142,6 +148,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConfigurationException>(ConfigurationException.class,
                 "ConfigurationException") {
 
+            @Override
             protected ConfigurationException createException(final String message) {
                 return new ConfigurationException(message);
             }
@@ -150,6 +157,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConnectionBrokenException>(
                 ConnectionBrokenException.class, "ConnectionBrokenException") {
 
+            @Override
             protected ConnectionBrokenException createException(final String message) {
                 return new ConnectionBrokenException(message);
             }
@@ -158,6 +166,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConnectionFailedException>(
                 ConnectionFailedException.class, "ConnectionFailedException") {
 
+            @Override
             protected ConnectionFailedException createException(final String message) {
                 return new ConnectionFailedException(message);
             }
@@ -166,6 +175,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConnectorIOException>(ConnectorIOException.class,
                 "ConnectorIOException") {
 
+            @Override
             protected ConnectorIOException createException(final String message) {
                 return new ConnectorIOException(message);
             }
@@ -198,6 +208,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<InvalidPasswordException>(InvalidPasswordException.class,
                 "InvalidPasswordException") {
 
+            @Override
             protected InvalidPasswordException createException(final String message) {
                 return new InvalidPasswordException(message);
             }
@@ -206,6 +217,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<UnknownUidException>(UnknownUidException.class,
                 "UnknownUidException") {
 
+            @Override
             protected UnknownUidException createException(final String message) {
                 return new UnknownUidException(message);
             }
@@ -214,6 +226,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<InvalidCredentialException>(
                 InvalidCredentialException.class, "InvalidCredentialException") {
 
+            @Override
             protected InvalidCredentialException createException(final String message) {
                 return new InvalidCredentialException(message);
             }
@@ -222,6 +235,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<PermissionDeniedException>(
                 PermissionDeniedException.class, "PermissionDeniedException") {
 
+            @Override
             protected PermissionDeniedException createException(final String message) {
                 return new PermissionDeniedException(message);
             }
@@ -230,6 +244,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConnectorSecurityException>(
                 ConnectorSecurityException.class, "ConnectorSecurityException") {
 
+            @Override
             protected ConnectorSecurityException createException(final String message) {
                 return new ConnectorSecurityException(message);
             }
@@ -238,6 +253,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<OperationTimeoutException>(
                 OperationTimeoutException.class, "OperationTimeoutException") {
 
+            @Override
             protected OperationTimeoutException createException(final String message) {
                 return new OperationTimeoutException(message);
             }
@@ -246,6 +262,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<InvalidAttributeValueException>(
                 InvalidAttributeValueException.class, "InvalidAttributeValueException") {
 
+            @Override
             protected InvalidAttributeValueException createException(final String message) {
                 return new InvalidAttributeValueException(message);
             }
@@ -254,6 +271,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<PreconditionFailedException>(
                 PreconditionFailedException.class, "PreconditionFailedException") {
 
+            @Override
             protected PreconditionFailedException createException(final String message) {
                 return new PreconditionFailedException(message);
             }
@@ -262,6 +280,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<PreconditionRequiredException>(
                 PreconditionRequiredException.class, "PreconditionRequiredException") {
 
+            @Override
             protected PreconditionRequiredException createException(final String message) {
                 return new PreconditionRequiredException(message);
             }
@@ -270,6 +289,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<RetryableException>(RetryableException.class,
                 "RetryableException") {
 
+            @Override
             protected RetryableException createException(final String message) {
                 return RetryableException.wrap(message, (Throwable) null);
             }
@@ -278,6 +298,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new AbstractObjectSerializationHandler(RemoteWrappedException.class,
                 "RemoteWrappedException") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 String throwableClass =
                         decoder.readStringField(RemoteWrappedException.FIELD_CLASS,
@@ -285,14 +306,15 @@ class CommonObjectHandlers {
                 String message =
                         decoder.readStringField(RemoteWrappedException.FIELD_MESSAGE, null);
                 RemoteWrappedException cause =
-                        (RemoteWrappedException) decoder.readObjectField("RemoteWrappedException", RemoteWrappedException.class,
-                                null);
+                        (RemoteWrappedException) decoder.readObjectField("RemoteWrappedException", 
+                                RemoteWrappedException.class, null);
                 String stackTrace =
                         decoder.readStringField(RemoteWrappedException.FIELD_STACK_TRACE, null);
 
                 return new RemoteWrappedException(throwableClass, message, cause, stackTrace);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final RemoteWrappedException val = (RemoteWrappedException) object;
                 encoder.writeStringField(RemoteWrappedException.FIELD_CLASS, val
@@ -307,6 +329,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<ConnectorException>(ConnectorException.class,
                 "ConnectorException") {
 
+            @Override
             protected ConnectorException createException(final String message) {
                 return new ConnectorException(message);
             }
@@ -315,6 +338,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<IllegalArgumentException>(IllegalArgumentException.class,
                 "IllegalArgumentException") {
 
+            @Override
             protected IllegalArgumentException createException(final String message) {
                 return new IllegalArgumentException(message);
             }
@@ -323,6 +347,7 @@ class CommonObjectHandlers {
         HANDLERS.add(new ThrowableHandler<RuntimeException>(RuntimeException.class,
                 "RuntimeException") {
 
+            @Override
             protected RuntimeException createException(final String message) {
                 return new RuntimeException(message);
             }
@@ -330,6 +355,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new ThrowableHandler<Exception>(Exception.class, "Exception") {
 
+            @Override
             protected Exception createException(final String message) {
                 return new Exception(message);
             }
@@ -337,6 +363,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new ThrowableHandler<Throwable>(Throwable.class, "Throwable") {
 
+            @Override
             protected Throwable createException(final String message) {
                 return new RuntimeException(message);
             }
@@ -344,6 +371,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AttributeHandler<Attribute>(Attribute.class, "Attribute") {
 
+            @Override
             protected Attribute createAttribute(final String name, final List<Object> value) {
                 return AttributeBuilder.build(name, value);
             }
@@ -353,11 +381,12 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(AttributeInfo.class, "AttributeInfo") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final AttributeInfoBuilder builder =
                         new AttributeInfoBuilder(decoder.readStringField("name", null), decoder
                                 .readClassField("type", null));
-                final Set<Flags> flags = new HashSet<Flags>();
+                final Set<Flags> flags = EnumSet.noneOf(Flags.class);
                 final int count = decoder.getNumSubObjects();
                 for (int i = 0; i < count; i++) {
                     final Object o = decoder.readObjectContents(i);
@@ -366,9 +395,12 @@ class CommonObjectHandlers {
                     }
                 }
                 builder.setFlags(flags);
+                builder.setNativeName(decoder.readStringField("nativeName", null));
+                builder.setSubtype(decoder.readStringField("subtype", null));
                 return builder.build();
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final AttributeInfo val = (AttributeInfo) object;
                 encoder.writeStringField("name", val.getName());
@@ -377,22 +409,26 @@ class CommonObjectHandlers {
                 for (Flags flag : flags) {
                     encoder.writeObjectContents(flag);
                 }
+                encoder.writeStringField("nativeName", val.getNativeName());
+                encoder.writeStringField("subtype", val.getSubtype());
             }
         });
 
         HANDLERS.add(new AbstractObjectSerializationHandler(ConnectorObject.class,
                 "ConnectorObject") {
 
+            @Override
             public Object deserialize(ObjectDecoder decoder) {
                 final ObjectClass objectClass =
                         (ObjectClass) decoder.readObjectField("ObjectClass", ObjectClass.class,
                                 null);
                 @SuppressWarnings("unchecked")
                 Set<? extends Attribute> atts =
-                        (Set) decoder.readObjectField("Attributes", Set.class, null);
+                        (Set<? extends Attribute>) decoder.readObjectField("Attributes", Set.class, null);
                 return new ConnectorObject(objectClass, atts);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ConnectorObject val = (ConnectorObject) object;
                 encoder.writeObjectField("ObjectClass", val.getObjectClass(), true);
@@ -402,11 +438,13 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(Name.class, "Name") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String val = decoder.readStringContents();
                 return new Name(val);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final Name val = (Name) object;
                 encoder.writeStringContents(val.getNameValue());
@@ -415,11 +453,13 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(ObjectClass.class, "ObjectClass") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String type = decoder.readStringField("type", null);
                 return new ObjectClass(type);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ObjectClass val = (ObjectClass) object;
                 encoder.writeStringField("type", val.getObjectClassValue());
@@ -429,28 +469,33 @@ class CommonObjectHandlers {
         HANDLERS.add(new AbstractObjectSerializationHandler(ObjectClassInfo.class,
                 "ObjectClassInfo") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String type = decoder.readStringField("type", null);
                 final boolean container = decoder.readBooleanField("container", false);
+                final boolean auxiliary = decoder.readBooleanField("auxiliary", false);
 
                 @SuppressWarnings("unchecked")
                 final Set<AttributeInfo> attrInfo =
                         (Set) decoder.readObjectField("AttributeInfos", Set.class, null);
 
-                return new ObjectClassInfo(type, attrInfo, container);
+                return new ObjectClassInfo(type, attrInfo, container, auxiliary);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ObjectClassInfo val = (ObjectClassInfo) object;
 
                 encoder.writeStringField("type", val.getType());
                 encoder.writeBooleanField("container", val.isContainer());
+                encoder.writeBooleanField("auxiliary", val.isAuxiliary());
                 encoder.writeObjectField("AttributeInfos", val.getAttributeInfo(), true);
             }
         });
 
         HANDLERS.add(new AbstractObjectSerializationHandler(Schema.class, "Schema") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 @SuppressWarnings("unchecked")
                 final Set<ObjectClassInfo> objectClasses =
@@ -507,6 +552,7 @@ class CommonObjectHandlers {
                         optionsByOperation);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final Schema val = (Schema) object;
                 encoder.writeObjectField("ObjectClassInfos", val.getObjectClassInfo(), true);
@@ -545,6 +591,8 @@ class CommonObjectHandlers {
         });
 
         HANDLERS.add(new AbstractObjectSerializationHandler(Uid.class, "Uid") {
+            
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String val = decoder.readStringField("uid", null);
                 final String revision = decoder.readStringField("revision", null);
@@ -555,6 +603,7 @@ class CommonObjectHandlers {
                 }
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final Uid val = (Uid) object;
                 encoder.writeStringField("uid", val.getUidValue());
@@ -564,6 +613,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(Script.class, "Script") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final ScriptBuilder builder = new ScriptBuilder();
                 builder.setScriptLanguage(decoder.readStringField("scriptLanguage", null));
@@ -573,6 +623,7 @@ class CommonObjectHandlers {
                 return builder.build();
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final Script val = (Script) object;
                 encoder.writeStringField("scriptLanguage", val.getScriptLanguage());
@@ -582,6 +633,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(ScriptContext.class, "ScriptContext") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String scriptLanguage = decoder.readStringField("scriptLanguage", null);
                 @SuppressWarnings("unchecked")
@@ -594,6 +646,7 @@ class CommonObjectHandlers {
                 return new ScriptContext(scriptLanguage, scriptText, arguments);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ScriptContext val = (ScriptContext) object;
                 encoder.writeStringField("scriptLanguage", val.getScriptLanguage());
@@ -606,6 +659,7 @@ class CommonObjectHandlers {
 
         new AbstractObjectSerializationHandler(OperationOptions.class, "OperationOptions") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 @SuppressWarnings("unchecked")
                 final Map<String, Object> options =
@@ -613,6 +667,7 @@ class CommonObjectHandlers {
                 return new OperationOptions(options);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final OperationOptions val = (OperationOptions) object;
                 encoder.writeObjectField("options", val.getOptions(), false);
@@ -623,11 +678,13 @@ class CommonObjectHandlers {
 
         new AbstractObjectSerializationHandler(SearchResult.class, "SearchResult") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 return new SearchResult(decoder.readStringField("pagedResultsCookie", null),
                         decoder.readIntField("remainingPagedResults", -1));
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final SearchResult val = (SearchResult) object;
                 encoder.writeStringField("pagedResultsCookie", val.getPagedResultsCookie());
@@ -639,11 +696,13 @@ class CommonObjectHandlers {
 
         new AbstractObjectSerializationHandler(SortKey.class, "SortKey") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 return new SortKey(decoder.readStringField("field", null), decoder
                         .readBooleanField("isAscending", true));
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final SortKey val = (SortKey) object;
                 encoder.writeStringField("field", val.getField());
@@ -654,12 +713,14 @@ class CommonObjectHandlers {
         HANDLERS.add(new AbstractObjectSerializationHandler(OperationOptionInfo.class,
                 "OperationOptionInfo") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String name = decoder.readStringField("name", null);
                 Class<?> type = decoder.readClassField("type", Class.class);
                 return new OperationOptionInfo(name, type);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final OperationOptionInfo val = (OperationOptionInfo) object;
                 encoder.writeStringField("name", val.getName());
@@ -671,11 +732,13 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(SyncToken.class, "SyncToken") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final Object value = decoder.readObjectField("value", null, null);
                 return new SyncToken(value);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final SyncToken val = (SyncToken) object;
                 encoder.writeObjectField("value", val.getValue(), false);
@@ -684,6 +747,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(SyncDelta.class, "SyncDelta") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final SyncDeltaBuilder builder = new SyncDeltaBuilder();
                 builder.setDeltaType((SyncDeltaType) decoder.readObjectField("SyncDeltaType",
@@ -699,6 +763,7 @@ class CommonObjectHandlers {
                 return builder.build();
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final SyncDelta val = (SyncDelta) object;
                 encoder.writeObjectField("SyncDeltaType", val.getDeltaType(), true);
@@ -712,6 +777,7 @@ class CommonObjectHandlers {
 
         HANDLERS.add(new AbstractObjectSerializationHandler(QualifiedUid.class, "QualifiedUid") {
 
+            @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final ObjectClass objectClass =
                         (ObjectClass) decoder.readObjectField("ObjectClass", ObjectClass.class,
@@ -720,6 +786,7 @@ class CommonObjectHandlers {
                 return new QualifiedUid(objectClass, uid);
             }
 
+            @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final QualifiedUid val = (QualifiedUid) object;
                 encoder.writeObjectField("ObjectClass", val.getObjectClass(), true);

@@ -19,6 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
+ * Portions Copyrighted 2015-2016 Evolveum
  */
 package org.identityconnectors.framework.common.objects;
 
@@ -52,6 +53,8 @@ public final class AttributeInfo {
 
     private final String name;
     private final Class<?> type;
+    private final String subtype;
+    private final String nativeName;
     private final Set<Flags> flags;
 
     /**
@@ -70,8 +73,58 @@ public final class AttributeInfo {
     public static enum Flags {
         REQUIRED, MULTIVALUED, NOT_CREATABLE, NOT_UPDATEABLE, NOT_READABLE, NOT_RETURNED_BY_DEFAULT
     }
+    
+    /**
+     * Enumeration of pre-defined attribute subtypes.
+     */
+    public static enum Subtypes {
+    	/**
+    	 * Case-ignore (case-insensitive) string.
+    	 */
+    	STRING_CASE_IGNORE(AttributeUtil.createSpecialName("STRING_CASE_IGNORE")),
+    	
+    	/**
+    	 * Unique Resource Identifier (RFC 3986)
+    	 */
+    	STRING_URI(AttributeUtil.createSpecialName("STRING_URI")),
+    	
+    	/**
+    	 * LDAP Distinguished Name (RFC 4511)
+    	 */
+    	STRING_LDAP_DN(AttributeUtil.createSpecialName("STRING_LDAP_DN")),
+    	
+    	/**
+    	 * Universally unique identifier (UUID)
+    	 */
+    	STRING_UUID(AttributeUtil.createSpecialName("STRING_UUID")),
+    	
+    	/**
+    	 * XML-formatted string (https://www.w3.org/TR/REC-xml/)
+    	 */
+    	STRING_XML(AttributeUtil.createSpecialName("STRING_XML")),
+    	
+    	/**
+    	 * JSON-formatted string
+    	 */
+    	STRING_JSON(AttributeUtil.createSpecialName("STRING_JSON"));
+    	
+    	private final String value;
 
+		private Subtypes(String value) {
+			this.value = value;
+		}
+    	
+    	@Override
+    	public String toString() {
+    		return value;
+    	}
+    }
+    
     AttributeInfo(final String name, final Class<?> type, final Set<Flags> flags) {
+    	this(name, type, null, null, flags);
+    }
+
+    AttributeInfo(final String name, final Class<?> type, final String subtype, final String nativeName, final Set<Flags> flags) {
         if (StringUtil.isBlank(name)) {
             throw new IllegalStateException("Name must not be blank!");
         }
@@ -86,6 +139,8 @@ public final class AttributeInfo {
         FrameworkUtil.checkAttributeType(type);
         this.name = name;
         this.type = type;
+        this.subtype = subtype;
+        this.nativeName = nativeName;
         this.flags = Collections.unmodifiableSet(EnumSet.copyOf(flags));
         if (!isReadable() && isReturnedByDefault()) {
             throw new IllegalArgumentException(
@@ -96,9 +151,11 @@ public final class AttributeInfo {
     }
 
     /**
-     * The native name of the attribute.
+     * The name of the attribute. This the attribute name as it is known by the
+     * framework. It may be derived from the native attribute name. Or it may
+     * be one of the special names such as __NAME__ or __PASSWORD__.
      *
-     * @return the native name of the attribute its describing.
+     * @return the name of the attribute its describing.
      */
     public String getName() {
         return name;
@@ -113,8 +170,39 @@ public final class AttributeInfo {
     public Class<?> getType() {
         return type;
     }
-
+    
     /**
+     * Optional subtype of the attribute. This defines a subformat or provides
+     * more specific definition what the attribute contains. E.g. it may define
+     * that the attribute contains case-insensitive string, URL, LDAP distinguished
+     * name and so on.
+     * 
+     * The subtype may contain one of the pre-defined subtypes 
+     * (a value form the Subtype enumeration). The subtype may also contain an URI
+     * that specifies a custom subtype that the connector recognizes and it is not
+     * defined in the pre-defined subtype enumeration.
+     * 
+     * @return attribute subtype.
+     */
+    public String getSubtype() {
+		return subtype;
+	}
+
+	/**
+     * The native name of the attribute. This is the attribute name as it is
+     * known by the resource. It is especially useful for attributes with
+     * special names such as __NAME__ or __PASSWORD__. In this case the
+     * nativeName will contain the real name of the attribute.
+     * The nativeName may be null. In such a case it is assumed that the
+     * native name is the same as name.
+     *
+     * @return the native name of the attribute its describing.
+     */
+    public String getNativeName() {
+		return nativeName;
+	}
+
+	/**
      * Returns the set of flags associated with the attribute.
      *
      * @return the set of flags associated with the attribute

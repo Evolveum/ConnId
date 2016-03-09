@@ -19,6 +19,7 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
+ * Portions Copyrighted 2016 Evolveum
  */
 package org.identityconnectors.framework.common.objects;
 
@@ -55,6 +56,8 @@ public final class AttributeBuilder {
     String name;
 
     List<Object> value;
+    
+   AttributeValueCompleteness attributeValueCompleteness = AttributeValueCompleteness.COMPLETE;
 
     /**
      * Creates a attribute with the specified name and a {@code null} value.
@@ -185,7 +188,7 @@ public final class AttributeBuilder {
         } else if (Name.NAME.equals(name)) {
             return new Name(getSingleStringValue());
         }
-        return new Attribute(name, value);
+        return new Attribute(name, value, attributeValueCompleteness);
     }
 
     /**
@@ -197,7 +200,9 @@ public final class AttributeBuilder {
      */
     private void checkSingleValue() {
         if (value == null || value.size() != 1) {
-            throw new IllegalArgumentException("Must be a single value.");
+            throw new IllegalArgumentException(
+                    "Value of attribute '" + name + "' must be a single value, but it has "
+                    + (value == null ? null : value.size()) + "values");
         }
     }
 
@@ -210,7 +215,7 @@ public final class AttributeBuilder {
     private String getSingleStringValue() {
         checkSingleValue();
         if (!(value.get(0) instanceof String)) {
-            throw new IllegalArgumentException("Attribute value must be an instance of String.");
+            throw new IllegalArgumentException("Value of attribute '" + name + "' must be an instance of String.");
         }
         return (String) value.get(0);
     }
@@ -229,7 +234,15 @@ public final class AttributeBuilder {
         }
     }
 
-    // =======================================================================
+    public AttributeValueCompleteness getAttributeValueCompleteness() {
+		return attributeValueCompleteness;
+	}
+
+	public void setAttributeValueCompleteness(AttributeValueCompleteness attributeValueCompleteness) {
+		this.attributeValueCompleteness = attributeValueCompleteness;
+	}
+
+	// =======================================================================
     // Operational Attributes
     // =======================================================================
     /**
