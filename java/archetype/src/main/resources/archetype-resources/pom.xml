@@ -28,7 +28,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version xmlns="">1.4.2.16</version>
+    <version xmlns="">1.4.2.18</version>
   </parent>
     
   <groupId>${groupId}</groupId>
@@ -38,7 +38,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <connid.version xmlns="">1.4.2.16</connid.version>
+    <connid.version xmlns="">1.4.2.18</connid.version>
         
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
