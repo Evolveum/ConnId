@@ -26,6 +26,9 @@
 Want to know more about ConnId? Check our [website](http://connid.tirasa.net/).
 
 <a href="https://travis-ci.org/Tirasa/ConnId"><img src="https://api.travis-ci.org/Tirasa/ConnId.png"/></a>
+<a href="https://maven-badges.herokuapp.com/maven-central/net.tirasa.connid/connid">
+  <img src="https://maven-badges.herokuapp.com/maven-central/net.tirasa.connid/connid/badge.svg"/>
+</a>
 
 # Available connectors
 Download instructions at [this page](https://connid.atlassian.net/wiki/display/BASE/Downloads).
@@ -108,6 +111,13 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://connid.atlassian.net/wiki/display/BASE/OpenAM">wiki</a></td>
   <td><a href="https://connid.atlassian.net/browse/OPENAM">issues</a></td>
   <td><a href="https://travis-ci.org/Tirasa/ConnIdOpenAMBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdOpenAMBundle.png"/></a></td>
+ </tr>
+<tr>
+  <td>REST</td>
+  <td>https://github.com/Tirasa/ConnIdRESTBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/REST">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/REST">issues</a></td>
+  <td><a href="https://travis-ci.org/Tirasa/ConnIdRESTBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdRESTBundle.png"/></a></td>
  </tr>
  <tr>
   <td>SOAP</td>
