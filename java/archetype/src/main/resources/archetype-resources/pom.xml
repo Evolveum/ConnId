@@ -28,7 +28,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version xmlns="">1.4.2.18</version>
+    <version xmlns="">1.4.2.29</version>
   </parent>
     
   <groupId>${groupId}</groupId>
@@ -38,7 +38,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <connid.version xmlns="">1.4.2.18</connid.version>
+    <connid.version xmlns="">1.4.2.29</connid.version>
         
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -138,4 +138,17 @@
       </plugin>
     </plugins>    
   </build>
+
+  <repositories>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+      </snapshots>
+    </repository>
+  </repositories>
+
 </project>
