@@ -32,7 +32,9 @@ import java.util.Set;
 import org.identityconnectors.common.Assertions;
 import org.identityconnectors.common.Base64;
 import org.identityconnectors.common.security.GuardedString;
+import org.identityconnectors.framework.api.APIConfiguration;
 import org.identityconnectors.framework.api.ConnectorFacade;
+import org.identityconnectors.framework.api.ConnectorInfo;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.api.operations.AuthenticationApiOp;
 import org.identityconnectors.framework.api.operations.CreateApiOp;
@@ -73,7 +75,7 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
     /**
      * Builds up the maps of supported operations and calls.
      */
-    public AbstractConnectorFacade(final APIConfigurationImpl configuration) {
+    public AbstractConnectorFacade(final APIConfiguration configuration) {
         Assertions.nullCheck(configuration, "configuration");
         // clone in case application tries to modify
         // after the fact. this is necessary to
@@ -90,7 +92,7 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
     /**
      * Builds up the maps of supported operations and calls.
      */
-    public AbstractConnectorFacade(final String configuration, final AbstractConnectorInfo connectorInfo) {
+    public AbstractConnectorFacade(final String configuration, final ConnectorInfo connectorInfo) {
         Assertions.nullCheck(configuration, "configuration");
         Assertions.nullCheck(connectorInfo, "connectorInfo");
         this.connectorFacadeKey = configuration;

@@ -125,12 +125,12 @@ public class OsgiConnectorInfoManagerImpl extends ConnectorFacadeFactory impleme
     public ConnectorFacade newInstance(APIConfiguration config) {
         ConnectorFacade ret = null;
         APIConfigurationImpl impl = (APIConfigurationImpl) config;
-        AbstractConnectorInfo connectorInfo = impl.getConnectorInfo();
+        ConnectorInfo connectorInfo = config.getConnectorInfo();
         if (connectorInfo instanceof LocalConnectorInfoImpl) {
             LocalConnectorInfoImpl localInfo = (LocalConnectorInfoImpl) connectorInfo;
             try {
                 // create a new Provisioner..
-                ret = new LocalConnectorFacadeImpl(localInfo, impl);
+                ret = new LocalConnectorFacadeImpl(localInfo, config);
             } catch (Exception ex) {
                 String connector = impl.getConnectorInfo().getConnectorKey().toString();
                 logger.error("Failed to create new connector facade: {}, {}", new Object[] {

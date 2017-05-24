@@ -26,6 +26,7 @@ package org.identityconnectors.framework.impl.api.remote;
 import java.lang.reflect.InvocationHandler;
 import java.util.HashMap;
 
+import org.identityconnectors.framework.api.APIConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.common.serializer.SerializerUtil;
 import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
@@ -42,7 +43,7 @@ public class RemoteConnectorFacadeImpl extends AbstractConnectorFacade {
     /**
      * Builds up the maps of supported operations and calls.
      */
-    public RemoteConnectorFacadeImpl(final APIConfigurationImpl configuration) {
+    public RemoteConnectorFacadeImpl(final APIConfiguration configuration) {
         super(generateRemoteConnectorFacadeKey(configuration), configuration.getConnectorInfo());
         // Restore the original configuration settings
         getAPIConfiguration().setProducerBufferSize(configuration.getProducerBufferSize());
@@ -56,11 +57,10 @@ public class RemoteConnectorFacadeImpl extends AbstractConnectorFacade {
         remoteConnectorFacadeKey = generateRemoteConnectorFacadeKey(getAPIConfiguration());
     }
 
-    private static String generateRemoteConnectorFacadeKey(final APIConfigurationImpl configuration){
-        APIConfigurationImpl copy = new APIConfigurationImpl(configuration);
-        copy.setProducerBufferSize(0);
-        copy.setTimeoutMap(new HashMap<Class<? extends APIOperation>, Integer>());
-        return SerializerUtil.serializeBase64Object(copy);
+    private static String generateRemoteConnectorFacadeKey(final APIConfiguration configuration){
+        configuration.setProducerBufferSize(0);
+    	configuration.setTimeoutMap(new HashMap<Class<? extends APIOperation>, Integer>());
+        return SerializerUtil.serializeBase64Object(configuration);
     }
 
     @Override

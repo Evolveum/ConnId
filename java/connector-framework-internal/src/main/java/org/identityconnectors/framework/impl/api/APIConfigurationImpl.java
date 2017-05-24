@@ -31,6 +31,7 @@ import java.util.Set;
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
 import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConnectorInfo;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
 
@@ -70,7 +71,7 @@ public class APIConfigurationImpl implements APIConfiguration {
      * The connector info from which this was created. Not serialized in this
      * object. Set when returned from the parent
      */
-    private transient AbstractConnectorInfo connectorInfo;
+    private transient ConnectorInfo connectorInfo;
 
     // =======================================================================
     // Constructors
@@ -100,13 +101,13 @@ public class APIConfigurationImpl implements APIConfiguration {
     // =======================================================================
     // Internal Methods
     // =======================================================================
-    public AbstractConnectorInfo getConnectorInfo() {
+    /*public AbstractConnectorInfo getConnectorInfo() {
         return connectorInfo;
     }
 
     public void setConnectorInfo(AbstractConnectorInfo connectorInfo) {
         this.connectorInfo = connectorInfo;
-    }
+    }*/
 
     public void setConnectorPoolingSupported(boolean supported) {
         isConnectorPoolingSupported = supported;
@@ -126,13 +127,13 @@ public class APIConfigurationImpl implements APIConfiguration {
         }
     }
 
-    public Map<Class<? extends APIOperation>, Integer> getTimeoutMap() {
+    /*public Map<Class<? extends APIOperation>, Integer> getTimeoutMap() {
         return timeoutMap;
     }
 
     public void setTimeoutMap(Map<Class<? extends APIOperation>, Integer> map) {
         timeoutMap = map;
-    }
+    }*/
 
     public void setSupportedOperations(Set<Class<? extends APIOperation>> op) {
         supportedOperations = op;
@@ -232,4 +233,26 @@ public class APIConfigurationImpl implements APIConfiguration {
     public void setResultsHandlerConfiguration(ResultsHandlerConfiguration config) {
         this.resultsHandlerConfiguration = config;
     }
+
+	@Override
+	public ConnectorInfo getConnectorInfo() {
+		return connectorInfo;
+	}
+
+	@Override
+	public void setConnectorInfo(ConnectorInfo connectorInfo) {
+		this.connectorInfo = connectorInfo;
+		
+	}
+
+	@Override
+	public Map<Class<? extends APIOperation>, Integer> getTimeoutMap() {
+		return timeoutMap;
+	}
+
+	@Override
+	public void setTimeoutMap(Map<Class<? extends APIOperation>, Integer> map) {
+		timeoutMap = map;
+		
+	}
 }

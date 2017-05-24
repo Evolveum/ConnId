@@ -30,11 +30,11 @@ import java.util.concurrent.ConcurrentMap;
 import org.identityconnectors.common.Pair;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
+import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
 import org.identityconnectors.framework.api.ConnectorKey;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.serializer.SerializerUtil;
-import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
-import org.identityconnectors.framework.impl.api.ConfigurationPropertiesImpl;
 import org.identityconnectors.framework.impl.api.local.operations.OperationalContext;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.Connector;
@@ -44,11 +44,11 @@ public class ConnectorPoolManager {
 
     public static class ConnectorPoolKey {
         private final ConnectorKey connectorKey;
-        private final ConfigurationPropertiesImpl configProperties;
+        private final ConfigurationProperties configProperties;
         private final ObjectPoolConfiguration poolingConfig;
 
         public ConnectorPoolKey(final ConnectorKey connectorKey,
-                final ConfigurationPropertiesImpl configProperties,
+                final ConfigurationProperties configProperties,
                 final ObjectPoolConfiguration poolingConfig) {
 
             this.connectorKey = connectorKey;
@@ -81,11 +81,11 @@ public class ConnectorPoolManager {
     }
 
     private static class ConnectorPoolHandler implements ObjectPoolHandler<PoolableConnector> {
-        private final APIConfigurationImpl apiConfiguration;
+        private final APIConfiguration apiConfiguration;
         private final LocalConnectorInfoImpl localConnectorInfo;
         private final OperationalContext context;
 
-        public ConnectorPoolHandler(final APIConfigurationImpl apiConfiguration,
+        public ConnectorPoolHandler(final APIConfiguration apiConfiguration,
                 final LocalConnectorInfoImpl localInfo) {
 
             this.apiConfiguration = apiConfiguration;
@@ -120,8 +120,7 @@ public class ConnectorPoolManager {
                     Configuration config = null;
                     if (null == context) {
                         config =
-                                JavaClassProperties.createBean(apiConfiguration
-                                        .getConfigurationProperties(), localConnectorInfo
+                                JavaClassProperties.createBean(apiConfiguration, localConnectorInfo
                                         .getConnectorConfigurationClass());
                     } else {
                         config = context.getConfiguration();
@@ -183,9 +182,9 @@ public class ConnectorPoolManager {
      * Get a object pool for this connector if it supports connector pooling.
      */
     public static Pair<ConnectorPoolKey, ObjectPool<PoolableConnector>> getPool(
-            final APIConfigurationImpl impl, final LocalConnectorInfoImpl localInfo) {
+            final APIConfiguration config, final LocalConnectorInfoImpl localInfo) {
         try {
-            return getPool2(impl, localInfo);
+            return getPool2(config, localInfo);
         } catch (Exception e) {
             throw ConnectorException.wrap(e);
         }
@@ -199,23 +198,23 @@ public class ConnectorPoolManager {
     }
 
     private static Pair<ConnectorPoolKey, ObjectPool<PoolableConnector>> getPool2(
-            final APIConfigurationImpl impl, final LocalConnectorInfoImpl localInfo)
+            final APIConfiguration apiConfig, final LocalConnectorInfoImpl localInfo)
             throws InstantiationException, IllegalAccessException {
         // determine if this connector wants generic connector pooling..
-        if (impl.isConnectorPoolingSupported()) {
+    	if (apiConfig.isConnectorPoolingSupported()) {
             ConnectorPoolKey key =
-                    new ConnectorPoolKey(impl.getConnectorInfo().getConnectorKey(), impl
-                            .getConfigurationProperties(), impl.getConnectorPoolConfiguration());
+                    new ConnectorPoolKey(apiConfig.getConnectorInfo().getConnectorKey(), apiConfig
+                            .getConfigurationProperties(), apiConfig.getConnectorPoolConfiguration());
 
             // get the pool associated..
             ObjectPool<PoolableConnector> pool = POOLS.get(key);
             // create a new pool if it doesn't exist..
             if (pool == null) {
-                LOG.info("Creating new pool: {0}", impl.getConnectorInfo().getConnectorKey());
+                LOG.info("Creating new pool: {0}", apiConfig.getConnectorInfo().getConnectorKey());
                 // this instance is strictly used for the pool..
                 pool =
                         new ObjectPool<PoolableConnector>(
-                                new ConnectorPoolHandler(impl, localInfo), impl
+                                new ConnectorPoolHandler(apiConfig, localInfo), apiConfig
                                         .getConnectorPoolConfiguration());
                 // add back to the map of POOLS..
 
@@ -227,8 +226,8 @@ public class ConnectorPoolManager {
             }
             return Pair.of(key, pool);
         } else if (!localInfo.isConfigurationStateless()) {
-            return Pair.of(new ConnectorPoolKey(impl.getConnectorInfo().getConnectorKey(), impl
-                    .getConfigurationProperties(), impl.getConnectorPoolConfiguration()), null);
+            return Pair.of(new ConnectorPoolKey(apiConfig.getConnectorInfo().getConnectorKey(), apiConfig
+                    .getConfigurationProperties(), apiConfig.getConnectorPoolConfiguration()), null);
         }
         return Pair.of(null, null);
     }

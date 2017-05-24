@@ -40,14 +40,18 @@ import java.util.TreeSet;
 
 import org.identityconnectors.common.ReflectionUtil;
 import org.identityconnectors.common.StringUtil;
+import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.common.FrameworkUtil;
 import org.identityconnectors.framework.common.exceptions.ConfigurationException;
 import org.identityconnectors.framework.common.serializer.SerializerUtil;
+import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
 import org.identityconnectors.framework.impl.api.ConfigurationPropertiesImpl;
 import org.identityconnectors.framework.impl.api.ConfigurationPropertyImpl;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.ConfigurationClass;
+import org.identityconnectors.framework.spi.ConfigurationForResultsHandler;
 import org.identityconnectors.framework.spi.ConfigurationProperty;
 import org.identityconnectors.framework.spi.operations.SPIOperation;
 
@@ -76,10 +80,10 @@ public class JavaClassProperties {
      * Given a configuration class and populated properties, creates a bean for
      * it.
      */
-    public static Configuration createBean(ConfigurationPropertiesImpl properties,
+    public static Configuration createBean(APIConfiguration apiConfig,
             Class<? extends Configuration> configClass) {
         try {
-            return createBean2(properties, configClass);
+            return createBean2(apiConfig, configClass);
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
@@ -177,11 +181,25 @@ public class JavaClassProperties {
         return set;
     }
 
-    private static Configuration createBean2(ConfigurationPropertiesImpl properties,
+    private static Configuration createBean2(APIConfiguration apiConfig,
             Class<? extends Configuration> configClass) throws Exception {
+    	ConfigurationPropertiesImpl properties =  ((APIConfigurationImpl)apiConfig).getConfigurationProperties();
         Configuration rv = configClass.newInstance();
+        
         rv.setConnectorMessages(properties.getParent().getConnectorInfo().getMessages());
         mergeIntoBean2(properties, rv);
+        
+        if(rv instanceof ConfigurationForResultsHandler){
+        	
+        	ResultsHandlerConfiguration resultConfig = apiConfig.getResultsHandlerConfiguration();
+        	((ConfigurationForResultsHandler) rv).setEnableAttributesToGetSearchResultsHandler(resultConfig.isEnableAttributesToGetSearchResultsHandler());
+        	((ConfigurationForResultsHandler) rv).setEnableCaseInsensitiveFilter(resultConfig.isEnableCaseInsensitiveFilter());
+        	((ConfigurationForResultsHandler) rv).setEnableFilteredResultsHandler(resultConfig.isEnableFilteredResultsHandler());
+        	((ConfigurationForResultsHandler) rv).setEnableNormalizingResultsHandler(resultConfig.isEnableNormalizingResultsHandler());
+        	((ConfigurationForResultsHandler) rv).setFilteredResultsHandlerInValidationMode(resultConfig.isFilteredResultsHandlerInValidationMode());
+       
+        }
+        
         return rv;
     }
 

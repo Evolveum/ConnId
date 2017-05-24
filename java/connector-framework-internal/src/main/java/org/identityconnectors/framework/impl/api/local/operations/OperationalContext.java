@@ -24,6 +24,7 @@
 package org.identityconnectors.framework.impl.api.local.operations;
 
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.api.APIConfiguration;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
 import org.identityconnectors.framework.impl.api.local.JavaClassProperties;
@@ -48,7 +49,7 @@ public class OperationalContext {
     /**
      * Contains the {@link Connector} {@link Configuration}.
      */
-    protected final APIConfigurationImpl apiConfiguration;
+    protected final APIConfiguration apiConfiguration;
 
     private volatile Configuration configuration;
 
@@ -62,7 +63,7 @@ public class OperationalContext {
      * @param apiConfiguration
      */
     public OperationalContext(final LocalConnectorInfoImpl connectorInfo,
-            final APIConfigurationImpl apiConfiguration) {
+            final APIConfiguration apiConfiguration) {
         this.connectorInfo = connectorInfo;
         this.apiConfiguration = apiConfiguration;
 
@@ -77,8 +78,7 @@ public class OperationalContext {
             synchronized (this) {
                 if (null == configuration) {
                     this.configuration =
-                            JavaClassProperties.createBean(apiConfiguration
-                                    .getConfigurationProperties(), connectorInfo
+                            JavaClassProperties.createBean(apiConfiguration, connectorInfo
                                     .getConnectorConfigurationClass());
                 }
             }

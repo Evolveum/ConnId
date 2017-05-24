@@ -45,21 +45,20 @@ public class ConnectorFacadeFactoryImpl extends ConnectorFacadeFactory {
     @Override
     public ConnectorFacade newInstance(final APIConfiguration config) {
         ConnectorFacade ret = null;
-        final APIConfigurationImpl impl = (APIConfigurationImpl) config;
-        final AbstractConnectorInfo connectorInfo = impl.getConnectorInfo();
+        final ConnectorInfo connectorInfo = config.getConnectorInfo();
         if (connectorInfo instanceof LocalConnectorInfoImpl) {
             final LocalConnectorInfoImpl localInfo = (LocalConnectorInfoImpl) connectorInfo;
             try {
                 // create a new Provisioner.
-                ret = new LocalConnectorFacadeImpl(localInfo, impl);
+                ret = new LocalConnectorFacadeImpl(localInfo, config);
 
             } catch (Exception ex) {
-                String connector = impl.getConnectorInfo().getConnectorKey().toString();
+                String connector = config.getConnectorInfo().getConnectorKey().toString();
                 LOG.error(ex, "Failed to create new connector facade: {0}, {1}", connector, config);
                 throw ConnectorException.wrap(ex);
             }
         } else if (connectorInfo instanceof RemoteConnectorInfoImpl) {
-            ret = new RemoteConnectorFacadeImpl(impl);
+            ret = new RemoteConnectorFacadeImpl(config);
         } else {
             throw new IllegalArgumentException("Unknown ConnectorInfo type");
         }

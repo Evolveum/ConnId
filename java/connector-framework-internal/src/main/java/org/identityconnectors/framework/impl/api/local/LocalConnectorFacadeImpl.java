@@ -27,6 +27,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.identityconnectors.framework.api.APIConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.api.operations.AuthenticationApiOp;
 import org.identityconnectors.framework.api.operations.CreateApiOp;
@@ -125,7 +126,7 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
      * Builds up the maps of supported operations and calls.
      */
     public LocalConnectorFacadeImpl(final LocalConnectorInfoImpl connectorInfo,
-            final APIConfigurationImpl apiConfiguration) {
+            final APIConfiguration apiConfiguration) {
         super(apiConfiguration);
         this.connectorInfo = connectorInfo;
         if (connectorInfo.isConfigurationStateless()

@@ -22,6 +22,7 @@
  */
 package org.identityconnectors.framework.api;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
@@ -110,11 +111,20 @@ public interface APIConfiguration {
      * Get the size of the buffer.
      */
     int getProducerBufferSize();
-
+    
+    public ConnectorInfo getConnectorInfo();
+    
+    public void setConnectorInfo(ConnectorInfo connectorInfo);
+    
+    public Map<Class<? extends APIOperation>, Integer> getTimeoutMap();
+    
+    public void setTimeoutMap(Map<Class<? extends APIOperation>, Integer> map);
+    
     /**
      * Get the configuration of the ResultsHandler chain of the Search
      * operation.
      */
+    
     ResultsHandlerConfiguration getResultsHandlerConfiguration();
 
 }
