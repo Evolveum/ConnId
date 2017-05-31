@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.identityconnectors.common.CollectionUtil;
+import org.identityconnectors.framework.api.APIConfiguration;
 import org.identityconnectors.framework.api.ConfigurationProperties;
 import org.identityconnectors.framework.api.ConfigurationProperty;
 
@@ -44,54 +45,54 @@ public class ConfigurationPropertiesImpl implements ConfigurationProperties {
     /**
      * Properties, listed in order by their "order" attribute
      */
-    LinkedHashMap<String, ConfigurationPropertyImpl> properties;
+    LinkedHashMap<String, ConfigurationProperty> properties;
 
     /**
      * The container. Not serialized in this object. Set when this property is
      * added to parent
      */
-    private transient APIConfigurationImpl parent;
+    private transient APIConfiguration parent;
 
     // =======================================================================
     // Internal Methods
     // =======================================================================
 
-    public APIConfigurationImpl getParent() {
+    public APIConfiguration getParent() {
         return parent;
     }
 
-    public void setParent(APIConfigurationImpl parent) {
+    public void setParent(APIConfiguration parent) {
         this.parent = parent;
     }
 
-    private static class PropertyComparator implements Comparator<ConfigurationPropertyImpl>, Serializable {
+    private static class PropertyComparator implements Comparator<ConfigurationProperty>, Serializable {
 
         private static final long serialVersionUID = 1L;
 
         @Override
-        public int compare(final ConfigurationPropertyImpl o1, final ConfigurationPropertyImpl o2) {
+        public int compare(final ConfigurationProperty o1, final ConfigurationProperty o2) {
             int or1 = o1.getOrder();
             int or2 = o2.getOrder();
             return or1 < or2 ? -1 : or1 > or2 ? 1 : 0;
         }
     }
 
-    private static final Comparator<ConfigurationPropertyImpl> COMPARATOR =
+    private static final Comparator<ConfigurationProperty> COMPARATOR =
             new PropertyComparator();
 
-    public void setProperties(Collection<ConfigurationPropertyImpl> in) {
-        List<ConfigurationPropertyImpl> properties = new ArrayList<ConfigurationPropertyImpl>(in);
+    public void setProperties(Collection<ConfigurationProperty> in) {
+        List<ConfigurationProperty> properties = new ArrayList<ConfigurationProperty>(in);
         Collections.sort(properties, COMPARATOR);
-        LinkedHashMap<String, ConfigurationPropertyImpl> temp =
-                new LinkedHashMap<String, ConfigurationPropertyImpl>();
-        for (ConfigurationPropertyImpl property : properties) {
+        LinkedHashMap<String, ConfigurationProperty> temp =
+                new LinkedHashMap<String, ConfigurationProperty>();
+        for (ConfigurationProperty property : properties) {
             temp.put(property.getName(), property);
             property.setParent(this);
         }
         this.properties = temp;
     }
 
-    public Collection<ConfigurationPropertyImpl> getProperties() {
+    public Collection<ConfigurationProperty> getProperties() {
         return properties.values();
     }
 
@@ -122,7 +123,7 @@ public class ConfigurationPropertiesImpl implements ConfigurationProperties {
      */
     @Override
     public void setPropertyValue(String name, Object value) {
-        ConfigurationPropertyImpl property = properties.get(name);
+        ConfigurationProperty property = properties.get(name);
         if (property == null) {
             throw new IllegalArgumentException(MessageFormat.format(MSG, name));
         }
@@ -131,12 +132,12 @@ public class ConfigurationPropertiesImpl implements ConfigurationProperties {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ConfigurationPropertiesImpl) {
-            ConfigurationPropertiesImpl other = (ConfigurationPropertiesImpl) o;
-            HashSet<ConfigurationPropertyImpl> set1 =
-                    new HashSet<ConfigurationPropertyImpl>(properties.values());
-            HashSet<ConfigurationPropertyImpl> set2 =
-                    new HashSet<ConfigurationPropertyImpl>(other.properties.values());
+        if (o instanceof ConfigurationProperties) {
+            ConfigurationProperties other = (ConfigurationProperties) o;
+            HashSet<ConfigurationProperty> set1 =
+                    new HashSet<ConfigurationProperty>(properties.values());
+            HashSet<ConfigurationProperty> set2 =
+                    new HashSet<ConfigurationProperty>(other.getProperties());
             return set1.equals(set2);
         }
         return false;
@@ -144,8 +145,10 @@ public class ConfigurationPropertiesImpl implements ConfigurationProperties {
 
     @Override
     public int hashCode() {
-        HashSet<ConfigurationPropertyImpl> set1 =
-                new HashSet<ConfigurationPropertyImpl>(properties.values());
+        HashSet<ConfigurationProperty> set1 =
+                new HashSet<ConfigurationProperty>(properties.values());
         return set1.hashCode();
     }
+
+	
 }

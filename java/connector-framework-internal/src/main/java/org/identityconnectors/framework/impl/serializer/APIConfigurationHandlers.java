@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
+import org.identityconnectors.framework.api.ConfigurationProperty;
 import org.identityconnectors.framework.api.ConnectorKey;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
@@ -148,20 +150,20 @@ class APIConfigurationHandlers {
                 "ConfigurationProperties") {
 
             public Object deserialize(final ObjectDecoder decoder) {
-                final ConfigurationPropertiesImpl rv = new ConfigurationPropertiesImpl();
-                final List<ConfigurationPropertyImpl> props =
-                        new ArrayList<ConfigurationPropertyImpl>();
+                final ConfigurationProperties rv = new ConfigurationPropertiesImpl();
+                final List<ConfigurationProperty> props =
+                        new ArrayList<ConfigurationProperty>();
                 final int count = decoder.getNumSubObjects();
                 for (int i = 0; i < count; i++) {
-                    props.add((ConfigurationPropertyImpl) decoder.readObjectContents(i));
+                    props.add((ConfigurationProperty) decoder.readObjectContents(i));
                 }
                 rv.setProperties(props);
                 return rv;
             }
 
             public void serialize(final Object object, final ObjectEncoder encoder) {
-                final ConfigurationPropertiesImpl val = (ConfigurationPropertiesImpl) object;
-                for (ConfigurationPropertyImpl prop : val.getProperties()) {
+                final ConfigurationProperties val = (ConfigurationPropertiesImpl) object;
+                for (ConfigurationProperty prop : val.getProperties()) {
                     encoder.writeObjectContents(prop);
                 }
             }

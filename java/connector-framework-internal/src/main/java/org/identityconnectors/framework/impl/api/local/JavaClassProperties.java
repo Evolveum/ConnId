@@ -41,12 +41,12 @@ import java.util.TreeSet;
 import org.identityconnectors.common.ReflectionUtil;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.common.FrameworkUtil;
 import org.identityconnectors.framework.common.exceptions.ConfigurationException;
 import org.identityconnectors.framework.common.serializer.SerializerUtil;
-import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
 import org.identityconnectors.framework.impl.api.ConfigurationPropertiesImpl;
 import org.identityconnectors.framework.impl.api.ConfigurationPropertyImpl;
 import org.identityconnectors.framework.spi.Configuration;
@@ -68,7 +68,7 @@ public class JavaClassProperties {
     /**
      * Given a configuration class, creates the configuration properties for it.
      */
-    public static ConfigurationPropertiesImpl createConfigurationProperties(Configuration config) {
+    public static ConfigurationProperties createConfigurationProperties(Configuration config) {
         try {
             return createConfigurationProperties2(config);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class JavaClassProperties {
      * Given a configuration bean and populated properties, merges the
      * properties into the bean.
      */
-    public static void mergeIntoBean(ConfigurationPropertiesImpl properties, Configuration config) {
+    public static void mergeIntoBean(ConfigurationProperties properties, Configuration config) {
         try {
             mergeIntoBean2(properties, config);
         } catch (Exception e) {
@@ -101,11 +101,11 @@ public class JavaClassProperties {
         }
     }
 
-    private static ConfigurationPropertiesImpl createConfigurationProperties2(
+    private static ConfigurationProperties createConfigurationProperties2(
             Configuration defaultObject) throws Exception {
         Class<? extends Configuration> config = defaultObject.getClass();
-        ConfigurationPropertiesImpl properties = new ConfigurationPropertiesImpl();
-        List<ConfigurationPropertyImpl> temp = new ArrayList<ConfigurationPropertyImpl>();
+        ConfigurationProperties properties = new ConfigurationPropertiesImpl();
+        List<org.identityconnectors.framework.api.ConfigurationProperty> temp = new ArrayList<org.identityconnectors.framework.api.ConfigurationProperty>();
         Map<String, PropertyDescriptor> descs = getFilteredProperties(config);
 
         for (PropertyDescriptor desc : descs.values()) {
@@ -115,7 +115,7 @@ public class JavaClassProperties {
             String name = desc.getName();
 
             // get the configuration options..
-            ConfigurationProperty options = getPropertyOptions(getter, setter);
+            ConfigurationProperty options = getPropertyOptions(getter, setter);// ConfigurationProperty SPI
             // use the options to set internal properties..
             int order = 0;
             String helpKey = name + ".help";
@@ -153,7 +153,7 @@ public class JavaClassProperties {
 
             Object value = getter.invoke(defaultObject);
 
-            ConfigurationPropertyImpl prop = new ConfigurationPropertyImpl();
+            org.identityconnectors.framework.api.ConfigurationProperty prop = new ConfigurationPropertyImpl();
             prop.setConfidential(confidential);
             prop.setDisplayMessageKey(displayKey);
             prop.setHelpMessageKey(helpKey);
@@ -183,7 +183,7 @@ public class JavaClassProperties {
 
     private static Configuration createBean2(APIConfiguration apiConfig,
             Class<? extends Configuration> configClass) throws Exception {
-    	ConfigurationPropertiesImpl properties =  ((APIConfigurationImpl)apiConfig).getConfigurationProperties();
+    	ConfigurationProperties properties =  apiConfig.getConfigurationProperties();
         Configuration rv = configClass.newInstance();
         
         rv.setConnectorMessages(properties.getParent().getConnectorInfo().getMessages());
@@ -208,11 +208,11 @@ public class JavaClassProperties {
     private static final String MSG_PROPERTY =
             "For property ''{0}'' expected type ''{1}'' actual type ''{2}''.";
 
-    private static void mergeIntoBean2(ConfigurationPropertiesImpl properties, Configuration config)
+    private static void mergeIntoBean2(ConfigurationProperties properties, Configuration config)
             throws Exception {
         Class<? extends Configuration> configClass = config.getClass();
         Map<String, PropertyDescriptor> descriptors = getFilteredProperties(configClass);
-        for (ConfigurationPropertyImpl property : properties.getProperties()) {
+        for (org.identityconnectors.framework.api.ConfigurationProperty property : properties.getProperties()) {
             String name = property.getName();
             PropertyDescriptor desc = descriptors.get(name);
             if (desc == null) {
@@ -298,12 +298,12 @@ public class JavaClassProperties {
     /**
      * Get the option from the property.
      */
-    private static ConfigurationProperty getPropertyOptions(final Method getter, final Method setter) {
+    private static ConfigurationProperty getPropertyOptions(final Method getter, final Method setter) { 
         // the setter is dominant place to add the options.
-        ConfigurationProperty opts = setter.getAnnotation(ConfigurationProperty.class);
+        ConfigurationProperty opts = setter.getAnnotation(ConfigurationProperty.class); 
         if (opts == null) {
             // check if they set on the getter..
-            opts = getter.getAnnotation(ConfigurationProperty.class);
+            opts = getter.getAnnotation(ConfigurationProperty.class); 
         }
         return opts;
     }

@@ -25,6 +25,8 @@ package org.identityconnectors.framework.impl.api;
 import java.util.Set;
 
 import org.identityconnectors.common.CollectionUtil;
+import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
 import org.identityconnectors.framework.api.ConfigurationProperty;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.common.objects.ConnectorMessages;
@@ -89,7 +91,7 @@ public class ConfigurationPropertyImpl implements ConfigurationProperty {
      * The container. Not serialized in this object. Set when this property is
      * added to parent
      */
-    private transient ConfigurationPropertiesImpl parent;
+    private transient ConfigurationProperties parent;
 
     // =======================================================================
     // Internal Methods
@@ -138,11 +140,11 @@ public class ConfigurationPropertyImpl implements ConfigurationProperty {
         this.type = type;
     }
 
-    public ConfigurationPropertiesImpl getParent() {
+    public ConfigurationProperties getParent() {
         return parent;
     }
 
-    public void setParent(ConfigurationPropertiesImpl parent) {
+    public void setParent(ConfigurationProperties parent) {
         this.parent = parent;
     }
 
@@ -165,7 +167,7 @@ public class ConfigurationPropertyImpl implements ConfigurationProperty {
     }
 
     private String formatMessage(String key, String dflt, Object... args) {
-        APIConfigurationImpl apiConfig = getParent().getParent();
+        APIConfiguration apiConfig = getParent().getParent();
         ConnectorMessages messages = apiConfig.getConnectorInfo().getMessages();
         return messages.format(key, dflt, args);
     }

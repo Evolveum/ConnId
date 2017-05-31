@@ -54,6 +54,8 @@ import org.identityconnectors.common.script.Script;
 import org.identityconnectors.common.script.ScriptBuilder;
 import org.identityconnectors.common.security.GuardedByteArray;
 import org.identityconnectors.common.security.GuardedString;
+import org.identityconnectors.framework.api.ConfigurationProperties;
+import org.identityconnectors.framework.api.ConfigurationProperty;
 import org.identityconnectors.framework.api.ConnectorKey;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.api.operations.CreateApiOp;
@@ -466,7 +468,7 @@ public class ObjectSerializationTests {
 
     @Test
     public void testConfigurationProperties() {
-        ConfigurationPropertyImpl prop1 = new ConfigurationPropertyImpl();
+        ConfigurationProperty prop1 = new ConfigurationPropertyImpl();
         prop1.setName("foo");
         prop1.setOrder(1);
         prop1.setConfidential(true);
@@ -478,18 +480,18 @@ public class ObjectSerializationTests {
         prop1.setType(String.class);
         prop1.setOperations(null);
 
-        ConfigurationPropertiesImpl v1 = new ConfigurationPropertiesImpl();
+        ConfigurationProperties v1 = new ConfigurationPropertiesImpl();
         v1.setProperties(CollectionUtil.newList(prop1));
         v1.setPropertyValue("foo", "bar");
 
-        ConfigurationPropertiesImpl v2 = (ConfigurationPropertiesImpl)
+        ConfigurationProperties v2 = (ConfigurationPropertiesImpl)
             cloneObject(v1);
         assertEquals("bar", v2.getProperty("foo").getValue());
     }
 
     @Test
     public void testAPIConfiguration() {
-        ConfigurationPropertyImpl prop1 = new ConfigurationPropertyImpl();
+        ConfigurationProperty prop1 = new ConfigurationPropertyImpl();
         prop1.setName("foo");
         prop1.setOrder(1);
         prop1.setConfidential(true);
@@ -501,7 +503,7 @@ public class ObjectSerializationTests {
         prop1.setType(String.class);
         prop1.setOperations(null);
 
-        ConfigurationPropertiesImpl props1 = new ConfigurationPropertiesImpl();
+        ConfigurationProperties props1 = new ConfigurationPropertiesImpl();
         props1.setProperties(CollectionUtil.newList(prop1));
 
         APIConfigurationImpl v1 = new APIConfigurationImpl();
@@ -551,8 +553,8 @@ public class ObjectSerializationTests {
         v1.setConnectorKey(new ConnectorKey("my bundle",
                 "my version",
             "my connector"));
-        ConfigurationPropertiesImpl configProperties = new ConfigurationPropertiesImpl();
-        configProperties.setProperties(new ArrayList<ConfigurationPropertyImpl>());
+        ConfigurationProperties configProperties = new ConfigurationPropertiesImpl();
+        configProperties.setProperties(new ArrayList<ConfigurationProperty>());
         APIConfigurationImpl apiImpl = new APIConfigurationImpl();
         apiImpl.setConfigurationProperties(configProperties);
         v1.setDefaultAPIConfiguration(apiImpl);
@@ -927,8 +929,8 @@ public class ObjectSerializationTests {
         RemoteConnectorInfoImpl info = new RemoteConnectorInfoImpl();
         info.setMessages(new ConnectorMessagesImpl());
         info.setConnectorKey(key);
-        ConfigurationPropertiesImpl configProperties = new ConfigurationPropertiesImpl();
-        configProperties.setProperties(new ArrayList<ConfigurationPropertyImpl>());
+        ConfigurationProperties configProperties = new ConfigurationPropertiesImpl();
+        configProperties.setProperties(new ArrayList<ConfigurationProperty>());
         APIConfigurationImpl apiImpl = new APIConfigurationImpl();
         apiImpl.setConfigurationProperties(configProperties);
         info.setDefaultAPIConfiguration(apiImpl);
@@ -945,7 +947,7 @@ public class ObjectSerializationTests {
     @Test
     public void testOperationRequest() {
         ConfigurationPropertiesImpl configProperties = new ConfigurationPropertiesImpl();
-        configProperties.setProperties(new ArrayList<ConfigurationPropertyImpl>());
+        configProperties.setProperties(new ArrayList<ConfigurationProperty>());
         APIConfigurationImpl apiImpl =  new APIConfigurationImpl();
         apiImpl.setConfigurationProperties(configProperties);
         List<Object> args = new ArrayList<Object>();

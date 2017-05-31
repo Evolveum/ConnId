@@ -126,5 +126,11 @@ public interface APIConfiguration {
      */
     
     ResultsHandlerConfiguration getResultsHandlerConfiguration();
+    
+    public void setConnectorPoolingSupported(boolean supported);
+    
+    public void setConfigurationProperties(ConfigurationProperties properties);
+    
+    public void setSupportedOperations(Set<Class<? extends APIOperation>> op);
 
 }

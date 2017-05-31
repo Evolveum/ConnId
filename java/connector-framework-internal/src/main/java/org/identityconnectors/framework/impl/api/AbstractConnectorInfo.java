@@ -38,7 +38,7 @@ abstract public class AbstractConnectorInfo implements ConnectorInfo {
     private ConnectorMessages messages;
     private String connectorCategoryKey;
 
-    private APIConfigurationImpl defaultAPIConfiguration;
+    private APIConfiguration defaultAPIConfiguration;
 
     protected AbstractConnectorInfo() {
 
@@ -96,11 +96,11 @@ abstract public class AbstractConnectorInfo implements ConnectorInfo {
         return rv;
     }
 
-    public final APIConfigurationImpl getDefaultAPIConfiguration() {
+    public final APIConfiguration getDefaultAPIConfiguration() {
         return defaultAPIConfiguration;
     }
 
-    public final void setDefaultAPIConfiguration(APIConfigurationImpl api) {
+    public final void setDefaultAPIConfiguration(APIConfiguration api) {
         if (api != null) {
             api.setConnectorInfo(this);
         }

@@ -22,6 +22,7 @@
  */
 package org.identityconnectors.framework.api;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.identityconnectors.framework.spi.Configuration;
@@ -61,5 +62,13 @@ public interface ConfigurationProperties {
      *             if the property name does not exist.
      */
     void setPropertyValue(String name, Object value);
+    
+    public void setProperties(Collection<ConfigurationProperty> in);
+    
+    public Collection<ConfigurationProperty> getProperties();
+    
+    public void setParent(APIConfiguration parent);
+    
+    public APIConfiguration getParent();
 
 }

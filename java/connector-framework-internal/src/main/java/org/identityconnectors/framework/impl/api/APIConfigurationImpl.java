@@ -31,6 +31,7 @@ import java.util.Set;
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
 import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
 import org.identityconnectors.framework.api.ConnectorInfo;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.APIOperation;
@@ -49,7 +50,7 @@ public class APIConfigurationImpl implements APIConfiguration {
 
     private boolean isConnectorPoolingSupported;
 
-    private ConfigurationPropertiesImpl configurationProperties;
+    private ConfigurationProperties configurationProperties;
 
     /**
      * Default size of the buffer.
@@ -117,7 +118,7 @@ public class APIConfigurationImpl implements APIConfiguration {
         connectorPoolConfiguration = config;
     }
 
-    public void setConfigurationProperties(ConfigurationPropertiesImpl properties) {
+    public void setConfigurationProperties(ConfigurationProperties properties) {
         if (configurationProperties != null) {
             configurationProperties.setParent(null);
         }
@@ -169,7 +170,7 @@ public class APIConfigurationImpl implements APIConfiguration {
      * {@inheritDoc}
      */
     @Override
-    public ConfigurationPropertiesImpl getConfigurationProperties() {
+    public ConfigurationProperties getConfigurationProperties() {
         return configurationProperties;
     }
 
@@ -255,4 +256,6 @@ public class APIConfigurationImpl implements APIConfiguration {
 		timeoutMap = map;
 		
 	}
+
+
 }

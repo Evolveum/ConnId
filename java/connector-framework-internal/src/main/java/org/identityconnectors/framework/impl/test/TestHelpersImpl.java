@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.api.APIConfiguration;
+import org.identityconnectors.framework.api.ConfigurationProperties;
+import org.identityconnectors.framework.api.ConfigurationProperty;
 import org.identityconnectors.framework.api.ConnectorKey;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.ConnectorMessages;
@@ -77,7 +79,7 @@ public class TestHelpersImpl implements TestHelpersSpi {
         info.setConnectorKey(new ConnectorKey(clazz.getName() + ".bundle", "1.0", clazz.getName()));
         info.setMessages(createDummyMessages());
         try {
-            final APIConfigurationImpl rv = createDefaultAPIConfiguration(info);
+            final APIConfiguration rv = createDefaultAPIConfiguration(info);
             rv.setConfigurationProperties(JavaClassProperties.createConfigurationProperties(config));
 
             info.setDefaultAPIConfiguration(rv);
@@ -111,14 +113,14 @@ public class TestHelpersImpl implements TestHelpersSpi {
             info.setMessages(messages);
         }
 
-        final APIConfigurationImpl impl = createDefaultAPIConfiguration(info);
-        info.setDefaultAPIConfiguration(impl);
+        final APIConfiguration config = createDefaultAPIConfiguration(info);
+        info.setDefaultAPIConfiguration(config);
 
-        final ConfigurationPropertiesImpl configProps = impl.getConfigurationProperties();
+        final ConfigurationProperties configProps = config.getConfigurationProperties();
 
         final String fullPrefix = StringUtil.isBlank(prefix) ? null : prefix + ".";
 
-        for (ConfigurationPropertyImpl property : configProps.getProperties()) {
+        for (ConfigurationProperty property : configProps.getProperties()) {
             @SuppressWarnings("unchecked")
             Object value = configData.getProperty(
                     null == fullPrefix ? property.getName() : fullPrefix + property.getName(),
@@ -127,13 +129,13 @@ public class TestHelpersImpl implements TestHelpersSpi {
                 property.setValue(value);
             }
         }
-        return impl;
+        return config;
     }
 
     @Override
     public void fillConfiguration(final Configuration config, final Map<String, ? extends Object> configData) {
         final Map<String, Object> configDataCopy = new HashMap<String, Object>(configData);
-        final ConfigurationPropertiesImpl configProps = JavaClassProperties.createConfigurationProperties(config);
+        final ConfigurationProperties configProps = JavaClassProperties.createConfigurationProperties(config);
         for (String propName : configProps.getPropertyNames()) {
             // Remove the entry from the config map, so that at the end
             // the map only contains entries that were not assigned to a config

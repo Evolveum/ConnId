@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.identityconnectors.framework.api.operations.APIOperation;
 
+
 /**
  * Represents at the API level a property of a Connector's
  * {@link org.identityconnectors.framework.spi.Configuration Configuration at
@@ -90,4 +91,32 @@ public interface ConfigurationProperty {
      * applicable to all operations.
      */
     public Set<Class<? extends APIOperation>> getOperations();
+    
+    public void setConfidential(boolean confidential);
+    
+    public void setHelpMessageKey(String key);
+    
+    public String getHelpMessageKey();
+    
+    public void setDisplayMessageKey(String key);
+    
+    public String getDisplayMessageKey();
+    
+    public void setGroupMessageKey(String key);
+    
+    public String getGroupMessageKey();
+    
+    public void setType(Class<?> type);
+    
+    public void setOperations(Set<Class<? extends APIOperation>> set);
+    
+    public void setRequired(boolean v);
+    
+    public void setOrder(int order);
+    
+    public int getOrder();
+    
+    public void setName(String name);
+    
+    public void setParent(ConfigurationProperties parent);
 }

@@ -321,14 +321,14 @@ public class LocalConnectorInfoManagerImpl implements ConnectorInfoManager {
      * Create an instance of the {@link APIConfiguration} object to setup the
      * framework etc..
      */
-    public static APIConfigurationImpl createDefaultAPIConfiguration(
+    public static APIConfiguration createDefaultAPIConfiguration(
             final LocalConnectorInfoImpl localInfo) {
         // setup classloader since we are going to construct the config bean
         ThreadClassLoaderManager.getInstance().pushClassLoader(
                 localInfo.getConnectorClass().getClassLoader());
         try {
             final Class<? extends Connector> connectorClass = localInfo.getConnectorClass();
-            final APIConfigurationImpl rv = new APIConfigurationImpl();
+            final APIConfiguration rv = new APIConfigurationImpl();
             final Configuration config = localInfo.getConnectorConfigurationClass().newInstance();
             final boolean pooling = PoolableConnector.class.isAssignableFrom(connectorClass);
             rv.setConnectorPoolingSupported(pooling);
