@@ -30,7 +30,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version>1.4.2.35</version>
+    <version>1.4.4.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>connector-framework</artifactId>
@@ -79,6 +79,11 @@
         <configuration>
           <instructions>
             <DynamicImport-Package>*</DynamicImport-Package>
+            <Export-Package>
+              {local-packages},
+              org.identityconnectors.framework.impl.*
+            </Export-Package>
+            <Require-Capability>org.identityconnectors.framework.internal</Require-Capability>
           </instructions>
         </configuration>
       </plugin>

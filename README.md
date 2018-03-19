@@ -56,6 +56,13 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://connid.atlassian.net/browse/AD">issues</a></td>
   <td><a href="https://travis-ci.org/Tirasa/ConnIdADBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdADBundle.png"/></a></td>
  </tr>
+ <tr>
+  <td>Azure</td>
+  <td>https://github.com/Tirasa/ConnIdAzureBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Azure">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/AZURE">issues</a></td>
+  <td><a href="https://travis-ci.org/Tirasa/ConnIdAzureBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdAzureBundle.png"/></a></td>
+ </tr>
   <tr>
   <td>CMD</td>
   <td>https://github.com/Tirasa/ConnIdCMDBundle</td>
@@ -126,19 +133,19 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://connid.atlassian.net/browse/SOAP">issues</a></td>
   <td><a href="https://travis-ci.org/Tirasa/ConnIdSOAPBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdSOAPBundle.png"/></a></td>
  </tr>
-  <tr>
-  <td>Zimbra</td>
-  <td>https://github.com/Tirasa/ConnIdZimbraBundle</td>
-  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Zimbra">wiki</a></td>
-  <td><a href="https://connid.atlassian.net/browse/Zimbra">issues</a></td>
-  <td></td>
- </tr>
  <tr>
   <td>UNIX</td>
   <td>https://github.com/Tirasa/ConnIdUNIXBundle</td>
   <td><a href="https://connid.atlassian.net/wiki/display/BASE/UNIX">wiki</a></td>
   <td><a href="https://connid.atlassian.net/browse/UNIX">issues</a></td>
   <td><a href="https://travis-ci.org/Tirasa/ConnIdUNIXBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdUNIXBundle.png"/></a></td>
+  </tr>
+ <tr>
+  <td>Zimbra</td>
+  <td>https://github.com/Tirasa/ConnIdZimbraBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Zimbra">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/Zimbra">issues</a></td>
+  <td><a href="https://travis-ci.org/Tirasa/ConnIdZimbraBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdZimbraBundle.png"/></a></td>
  </tr>
  </tbody>
 </table>
