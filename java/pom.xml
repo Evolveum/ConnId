@@ -30,7 +30,7 @@
   <name>ConnId</name>
   <groupId>net.tirasa.connid</groupId>
   <artifactId>connid</artifactId>
-  <version>1.4.3.11</version>
+  <version>1.5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- maven repository on sonatype -->
@@ -41,9 +41,6 @@
   </parent>
 
   <url>http://connid.tirasa.net/</url>
-  <prerequisites>
-    <maven>[3.0.3,)</maven>
-  </prerequisites>
 
   <licenses>
     <license>
@@ -57,7 +54,6 @@
     <connection>scm:git:git@github.com:Tirasa/ConnId.git</connection>
     <url>scm:git:git@github.com:Tirasa/ConnId.git</url>
     <developerConnection>scm:git:git@github.com:Tirasa/ConnId.git</developerConnection>
-    <tag>HEAD</tag>
   </scm>
   
   <distributionManagement>
@@ -99,11 +95,14 @@
   <properties>
     <parent.path>${basedir}</parent.path>
 
-    <groovy-all.version>2.4.11</groovy-all.version>
+    <groovy.version>2.5.0</groovy.version>
 
-    <logback.version>1.2.1</logback.version>
-    <slf4j.version>1.7.24</slf4j.version>
+    <logback.version>1.2.3</logback.version>
+    <slf4j.version>1.7.25</slf4j.version>
 
+    <junit.version>5.2.0</junit.version>
+
+    <targetJdk>1.8</targetJdk>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -111,26 +110,50 @@
     <dependencies>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>${groovy-all.version}</version>
+        <artifactId>groovy</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-templates</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-bsf</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-jsr223</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-datetime</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-dateutil</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-sql</artifactId>
+        <version>${groovy.version}</version>
       </dependency>
     
       <!-- OSGi -->
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-extender</artifactId>
-        <version>1.6.0</version>
+        <version>1.8.3</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
         <artifactId>org.osgi.core</artifactId>
-        <version>4.3.1</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>3.0</version>
+        <version>6.0.0</version>
       </dependency>
     
       <dependency>
@@ -162,27 +185,15 @@
 
       <!-- TEST -->
       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.12</version>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.testng</groupId>
-        <artifactId>testng</artifactId>
-        <version>6.9.6</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.easytesting</groupId>
-        <artifactId>fest-assert-core</artifactId>
-        <version>2.0M10</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-verifier</artifactId>
-        <version>1.6</version>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
       <!-- /TEST -->
@@ -195,80 +206,77 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.7.0</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>${targetJdk}</source>
+            <target>${targetJdk}</target>
+            <useIncrementalCompilation>false</useIncrementalCompilation>
             <showWarnings>true</showWarnings>
             <showDeprecation>true</showDeprecation>
-            <compilerArgument>-Xlint:all</compilerArgument>
+            <compilerArgument>-Xlint:unchecked</compilerArgument>
           </configuration>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.1.0</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
+          <version>3.1.0</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.19</version>
+          <version>2.22.0</version>
           <configuration>
             <includes>
               <include>**/*Tests.java</include>
             </includes>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
             <runOrder>alphabetical</runOrder>
-            <argLine>-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m -Xss256k</argLine>
+            <argLine>-Xms512m -Xmx1024m -Xss256k</argLine>
           </configuration>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.2.2</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
           <version>1.8</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.5.5</version>
+          <version>3.1.0</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>2.0.0</version>
+          <version>3.0.1</version>
         </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.19</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
           <artifactId>maven-jetty-plugin</artifactId>
           <version>6.1.26</version>
         </plugin>
+        
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.5.0</version>
           <configuration>
             <supportedProjectTypes>
               <supportedProjectType>jar</supportedProjectType>
@@ -281,12 +289,12 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>xml-maven-plugin</artifactId>
-          <version>1.0</version>
+          <version>1.0.2</version>
           <dependencies>
             <dependency>
               <groupId>xalan</groupId>
               <artifactId>xalan</artifactId>
-              <version>2.7.1</version>
+              <version>2.7.2</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -296,8 +304,57 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.gaul</groupId>
+        <artifactId>modernizer-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <configuration>
+          <javaVersion>${targetJdk}</javaVersion>
+          <exclusions>
+            <!-- Only occurs in 
+            connector-framework-internal/src/main/java/org/identityconnectors/framework/impl/api/ConnectorMessagesImpl.java:79
+            and cannot be avoided --> 
+            <exclusion>java/lang/StringBuffer."&lt;init&gt;":()V</exclusion>
+            <!-- Only occurs in 
+            connector-framework-osgi/src/main/java/org/identityconnectors/framework/impl/api/osgi/internal/Activator.java:65
+            and cannot be avoided --> 
+            <exclusion>java/util/Hashtable."&lt;init&gt;":()V</exclusion>
+          </exclusions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>modernizer-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>modernizer</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <id>copy-javadoc-legal-files</id>
@@ -351,7 +408,7 @@
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.11</version>
+        <version>3.0</version>
         <configuration>
           <header>${parent.path}/src/main/resources/header.txt</header>
           <strictCheck>true</strictCheck>
@@ -418,12 +475,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>2.10.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>2.5.3</version>
         <configuration>
           <mavenExecutorId>forked-path</mavenExecutorId>
           <autoVersionSubmodules>true</autoVersionSubmodules>

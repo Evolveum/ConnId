@@ -2,7 +2,7 @@
  * ====================
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2008-2009 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 2018 Evolveum. All rights reserved.
  *
  * The contents of this file are subject to the terms of the Common Development
  * and Distribution License("CDDL") (the "License").  You may not use this file
@@ -19,28 +19,17 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
- * Portions Copyrighted 2013 Evolveum
  */
-package org.identityconnectors.framework.common.objects.filter;
+package org.identityconnectors.framework.spi;
 
 /**
- *
- * Externally chained filters e.g. the filter implementing case insensitive searches.
- * They are removed from translation.
- *
- * IMPORTANT: Currently, these filters have to be chained at the beginning of the filter tree.
- *
- * @author mederly
+ * Optional interface that can be implemented by connectors that want to know their own name.
+ * This should perhaps be basic functionality of the framework. But it is not. We would not
+ * like to add this method to the basic connector interfaces, as this may ruin compatibility.
+ * Therefore we are solving the issue by creating this optional interface.
  */
-public abstract class ExternallyChainedFilter implements Filter {
+public interface InstanceNameAware {
 
-    private final Filter filter;
+    void setInstanceName(String instanceName);
 
-    public ExternallyChainedFilter(Filter filter) {
-        this.filter = filter;
-    }
-
-    public Filter getFilter() {
-        return filter;
-    }
 }

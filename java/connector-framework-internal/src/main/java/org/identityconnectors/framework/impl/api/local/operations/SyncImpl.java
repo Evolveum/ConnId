@@ -20,23 +20,20 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
- * Portions Copyrighted 2014 Evolveum
+ * Portions Copyrighted 2014-2018 Evolveum
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.identityconnectors.common.Assertions;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.api.ResultsHandlerConfiguration;
 import org.identityconnectors.framework.api.operations.SyncApiOp;
-import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptions;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.SyncDelta;
 import org.identityconnectors.framework.common.objects.SyncDeltaBuilder;
-import org.identityconnectors.framework.common.objects.SyncDeltaType;
 import org.identityconnectors.framework.common.objects.SyncResultsHandler;
 import org.identityconnectors.framework.common.objects.SyncToken;
 import org.identityconnectors.framework.spi.AttributeNormalizer;
@@ -45,9 +42,10 @@ import org.identityconnectors.framework.spi.SyncTokenResultsHandler;
 import org.identityconnectors.framework.spi.operations.SyncOp;
 
 public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
-	
-	// Special logger with SPI operation log name. Used for logging operation entry/exit
+
+    // Special logger with SPI operation log name. Used for logging operation entry/exit
     private static final Log OP_LOG = Log.getLog(SyncOp.class);
+
     private static final Log HANDLER_LOG = Log.getLog(SyncTokenResultsHandler.class);
 
     public SyncImpl(final ConnectorOperationalContext context, final Connector connector) {
@@ -55,8 +53,12 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
     }
 
     @Override
-    public SyncToken sync(final ObjectClass objectClass, final SyncToken token,
-            SyncResultsHandler handler, OperationOptions options) {
+    public SyncToken sync(
+            final ObjectClass objectClass,
+            final SyncToken token,
+            SyncResultsHandler handler,
+            OperationOptions options) {
+
         Assertions.nullCheck(objectClass, "objectClass");
         Assertions.nullCheck(handler, "handler");
         // convert null into empty
@@ -66,7 +68,7 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
 
         ResultsHandlerConfiguration hdlCfg =
                 null != getOperationalContext() ? getOperationalContext()
-                        .getResultsHandlerConfiguration() : new ResultsHandlerConfiguration();
+                                .getResultsHandlerConfiguration() : new ResultsHandlerConfiguration();
 
         // add a handler in the chain to remove attributes
         String[] attrsToGet = options.getAttributesToGet();
@@ -80,71 +82,63 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
         }
 
         final SyncResultsHandler handlerChain = handler;
-        final AtomicReference<SyncToken> result = new AtomicReference<SyncToken>(null);
-        
+        final AtomicReference<SyncToken> result = new AtomicReference<>(null);
+
         SyncTokenResultsHandler syncHandler = new SyncTokenResultsHandler() {
+
             @Override
             public void handleResult(SyncToken token) {
-            	if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
-            		HANDLER_LOG.log(SyncTokenResultsHandler.class, "handleResult",
-            				SpiOperationLoggingUtil.LOG_LEVEL, "Enter: handleResult("+token+")", null);
-            	}
-            	try {
-            		result.compareAndSet(null, token);
-            	} catch (RuntimeException e) {
-                	SpiOperationLoggingUtil.logOpException(HANDLER_LOG, SyncTokenResultsHandler.class, "handleResult", e);
-                	throw e;
+                if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
+                    HANDLER_LOG.log(SyncTokenResultsHandler.class, "handleResult",
+                            SpiOperationLoggingUtil.LOG_LEVEL, "Enter: handleResult(" + token + ")", null);
+                }
+                try {
+                    result.compareAndSet(null, token);
+                } catch (RuntimeException e) {
+                    SpiOperationLoggingUtil.logOpException(HANDLER_LOG, getOperationalContext(),
+                            SyncTokenResultsHandler.class, "handleResult", e);
+                    throw e;
                 }
                 if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
-            		HANDLER_LOG.log(SyncTokenResultsHandler.class, "handleResult",
-            				SpiOperationLoggingUtil.LOG_LEVEL, "Return", null);
-            	}
+                    HANDLER_LOG.log(SyncTokenResultsHandler.class, "handleResult",
+                            SpiOperationLoggingUtil.LOG_LEVEL, "Return", null);
+                }
             }
 
             @Override
             public boolean handle(final SyncDelta delta) {
-            	if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
-            		HANDLER_LOG.log(SyncTokenResultsHandler.class, "handle",
-            				SpiOperationLoggingUtil.LOG_LEVEL, "Enter: handle("+delta+")", null);
-            	}
+                if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
+                    HANDLER_LOG.log(SyncTokenResultsHandler.class, "handle",
+                            SpiOperationLoggingUtil.LOG_LEVEL, "Enter: handle(" + delta + ")", null);
+                }
                 boolean ret;
                 try {
-                	ret = handlerChain.handle(delta);
+                    ret = handlerChain.handle(delta);
                 } catch (RuntimeException e) {
-                	SpiOperationLoggingUtil.logOpException(HANDLER_LOG, SyncTokenResultsHandler.class, "handle", e);
-                	throw e;
+                    SpiOperationLoggingUtil.logOpException(HANDLER_LOG, getOperationalContext(),
+                            SyncTokenResultsHandler.class, "handle", e);
+                    throw e;
                 }
                 if (HANDLER_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL)) {
-            		HANDLER_LOG.log(SyncTokenResultsHandler.class, "handle",
-            				SpiOperationLoggingUtil.LOG_LEVEL, "Return: "+ret, null);
-            	}
+                    HANDLER_LOG.log(SyncTokenResultsHandler.class, "handle",
+                            SpiOperationLoggingUtil.LOG_LEVEL, "Return: " + ret, null);
+                }
                 return ret;
             }
         };
-        
-        if (isLoggable()) {
-        	StringBuilder bld = new StringBuilder();
-            bld.append("Enter: sync(");
-            bld.append(objectClass).append(", ");
-            bld.append(token).append(", ");
-            bld.append(syncHandler).append(", ");
-            bld.append(options).append(")");
-            final String msg = bld.toString();
-            OP_LOG.log(SyncOp.class, "sync", SpiOperationLoggingUtil.LOG_LEVEL, msg, null);
-        }
-        
+
+        SpiOperationLoggingUtil.logOpEntry(OP_LOG, getOperationalContext(), SyncOp.class, "sync",
+                objectClass, token, syncHandler, options);
+
         try {
-	        ((SyncOp) getConnector()).sync(objectClass, token, syncHandler, options);
+            ((SyncOp) getConnector()).sync(objectClass, token, syncHandler, options);
         } catch (RuntimeException e) {
-        	SpiOperationLoggingUtil.logOpException(OP_LOG, SyncOp.class,"sync",e);
-    		throw e;
+            SpiOperationLoggingUtil.logOpException(OP_LOG, getOperationalContext(), SyncOp.class, "sync", e);
+            throw e;
         }
-        
-        if (isLoggable()) {
-        	OP_LOG.log(SyncOp.class, "sync", SpiOperationLoggingUtil.LOG_LEVEL,
-        			"Return", null);
-        }
-        
+
+        SpiOperationLoggingUtil.logOpExit(OP_LOG, getOperationalContext(), SyncOp.class, "sync");
+
         return result.get();
     }
 
@@ -157,13 +151,12 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
      * Simple handler to reduce the attributes to only the set of attribute to
      * get.
      */
-    public static class AttributesToGetSyncResultsHandler extends AttributesToGetResultsHandler
-            implements SyncResultsHandler {
+    public static class AttributesToGetSyncResultsHandler
+            extends AttributesToGetResultsHandler implements SyncResultsHandler {
 
         private final SyncResultsHandler handler;
 
-        public AttributesToGetSyncResultsHandler(final SyncResultsHandler handler,
-                String[] attrsToGet) {
+        public AttributesToGetSyncResultsHandler(final SyncResultsHandler handler, String[] attrsToGet) {
             super(attrsToGet);
             this.handler = handler;
         }
@@ -177,8 +170,4 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
             return handler.handle(bld.build());
         }
     }
-    
-    private static boolean isLoggable() {
-		return OP_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL);
-	}
 }

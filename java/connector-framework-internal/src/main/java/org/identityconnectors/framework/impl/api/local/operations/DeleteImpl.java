@@ -20,12 +20,14 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2014 ForgeRock AS.
- * Portions Copyrighted 2014 Evolveum
+ * Portions Copyrighted 2014-2018 Evolveum
+ * Portions Copyrighted 2018 ConnId
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
 import org.identityconnectors.common.Assertions;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.api.operations.DeleteApiOp;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptions;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
@@ -33,28 +35,28 @@ import org.identityconnectors.framework.common.objects.Uid;
 import org.identityconnectors.framework.spi.Connector;
 import org.identityconnectors.framework.spi.operations.DeleteOp;
 
-public class DeleteImpl extends ConnectorAPIOperationRunner implements
-        org.identityconnectors.framework.api.operations.DeleteApiOp {
-	
-	// Special logger with SPI operation log name. Used for logging operation entry/exit
+public class DeleteImpl extends ConnectorAPIOperationRunner implements DeleteApiOp {
+
+    // Special logger with SPI operation log name. Used for logging operation entry/exit
     private static final Log OP_LOG = Log.getLog(DeleteOp.class);
 
     /**
      * Initializes the operation works.
      */
-    public DeleteImpl(final ConnectorOperationalContext context,
-            final Connector connector) {
-        super(context,connector);
+    public DeleteImpl(final ConnectorOperationalContext context, final Connector connector) {
+        super(context, connector);
     }
+
     /**
      * Calls the delete method on the Connector side.
      *
-     * @see org.identityconnectors.framework.api.operations.CreateApiOp#create(org.identityconnectors.framework.common.objects.ObjectClass, java.util.Set, org.identityconnectors.framework.common.objects.OperationOptions)
+     * @see
+     * org.identityconnectors.framework.api.operations.CreateApiOp#create(org.identityconnectors.framework.common.objects.ObjectClass,
+     * java.util.Set, org.identityconnectors.framework.common.objects.OperationOptions)
      */
     @Override
-    public void delete(final ObjectClass objectClass,
-            final Uid uid,
-            OperationOptions options) {
+    public void delete(final ObjectClass objectClass, final Uid uid, OperationOptions options) {
+
         Assertions.nullCheck(objectClass, "objectClass");
         if (ObjectClass.ALL.equals(objectClass)) {
             throw new UnsupportedOperationException(
@@ -62,38 +64,24 @@ public class DeleteImpl extends ConnectorAPIOperationRunner implements
         }
         Assertions.nullCheck(uid, "uid");
         //cast null as empty
-        if ( options == null ) {
+        if (options == null) {
             options = new OperationOptionsBuilder().build();
         }
         Connector connector = getConnector();
         final ObjectNormalizerFacade normalizer =
-            getNormalizer(objectClass);
-        Uid normalizedUid = (Uid)normalizer.normalizeAttribute(uid);
-        
-        if (isLoggable()) {
-        	StringBuilder bld = new StringBuilder();
-            bld.append("Enter: delete(");
-            bld.append(objectClass).append(", ");
-            bld.append(normalizedUid).append(", ");
-            bld.append(options).append(")");
-            final String msg = bld.toString();
-            OP_LOG.log(DeleteOp.class, "delete", SpiOperationLoggingUtil.LOG_LEVEL, msg, null);
-        }
-        
+                getNormalizer(objectClass);
+        Uid normalizedUid = (Uid) normalizer.normalizeAttribute(uid);
+
+        SpiOperationLoggingUtil.logOpEntry(OP_LOG, getOperationalContext(), DeleteOp.class, "delete",
+                objectClass, normalizedUid, options);
+
         try {
-        	((DeleteOp) connector).delete(objectClass, normalizedUid, options);
+            ((DeleteOp) connector).delete(objectClass, normalizedUid, options);
         } catch (RuntimeException e) {
-        	SpiOperationLoggingUtil.logOpException(OP_LOG, DeleteOp.class, "delete", e);
-        	throw e;
+            SpiOperationLoggingUtil.logOpException(OP_LOG, getOperationalContext(), DeleteOp.class, "delete", e);
+            throw e;
         }
-        
-        if (isLoggable()) {
-        	OP_LOG.log(DeleteOp.class, "delete", SpiOperationLoggingUtil.LOG_LEVEL,
-        			"Return", null);
-        }
+
+        SpiOperationLoggingUtil.logOpExit(OP_LOG, getOperationalContext(), DeleteOp.class, "delete");
     }
-    
-    private static boolean isLoggable() {
-		return OP_LOG.isLoggable(SpiOperationLoggingUtil.LOG_LEVEL);
-	}
 }

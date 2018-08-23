@@ -2,7 +2,7 @@
  * ====================
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2008-2009 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 2018 Evolveum, Inc. All rights reserved.
  *
  * The contents of this file are subject to the terms of the Common Development
  * and Distribution License("CDDL") (the "License").  You may not use this file
@@ -19,28 +19,24 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
- * Portions Copyrighted 2013 Evolveum
  */
-package org.identityconnectors.framework.common.objects.filter;
+package org.identityconnectors.framework.impl.api.local;
+
+import org.identityconnectors.framework.spi.Connector;
+import org.identityconnectors.framework.spi.InstanceNameAware;
 
 /**
- *
- * Externally chained filters e.g. the filter implementing case insensitive searches.
- * They are removed from translation.
- *
- * IMPORTANT: Currently, these filters have to be chained at the beginning of the filter tree.
- *
- * @author mederly
+ * Utility methods regarding connector lifecycle (creation, disposal).
+ * Not very clean. But the connector is created at two different places
+ * (ConnectorAPIOperationRunnerProxy and connector pool) without using
+ * common code. Therefore this util is still better than copying the
+ * code to two places or a big code refactoring.
  */
-public abstract class ExternallyChainedFilter implements Filter {
+public class ConnectorLifecycleUtil {
 
-    private final Filter filter;
-
-    public ExternallyChainedFilter(Filter filter) {
-        this.filter = filter;
-    }
-
-    public Filter getFilter() {
-        return filter;
+    public static void setConnectorInstanceName(Connector connector, String instanceName) {
+        if (connector instanceof InstanceNameAware) {
+            ((InstanceNameAware) connector).setInstanceName(instanceName);
+        }
     }
 }

@@ -20,8 +20,8 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2014 ForgeRock AS.
- * Portions Copyrighted 2014 Evolveum
- * Portions Copyrighted 2015 ConnId
+ * Portions Copyrighted 2014-2018 Evolveum
+ * Portions Copyrighted 2015-2018 ConnId
  */
 package org.identityconnectors.framework.impl.api;
 
@@ -37,7 +37,7 @@ import org.identityconnectors.framework.common.exceptions.ConnectorException;
  */
 public class LoggingProxy implements InvocationHandler {
 
-    static final Log.Level LOG_LEVEL = Log.Level.OK;
+    private static final Log.Level LOG_LEVEL = Log.Level.OK;
 
     private static final Log LOG = Log.getLog(LoggingProxy.class);
 
@@ -45,9 +45,12 @@ public class LoggingProxy implements InvocationHandler {
 
     private final Class<? extends APIOperation> op;
 
-    public LoggingProxy(final Class<? extends APIOperation> api, final Object target) {
+    private final String instanceName;
+
+    public LoggingProxy(final Class<? extends APIOperation> api, final Object target, final String instanceName) {
         op = api;
         this.target = target;
+        this.instanceName = instanceName;
     }
 
     /**
@@ -62,6 +65,9 @@ public class LoggingProxy implements InvocationHandler {
         final String methodName = method.getName();
         if (isLoggable()) {
             StringBuilder bld = new StringBuilder();
+            if (instanceName != null) {
+                bld.append("instance='").append(instanceName).append("' ");
+            }
             bld.append("Enter: ").append(method.getName()).append('(');
             for (int i = 0; args != null && i < args.length; i++) {
                 if (i != 0) {

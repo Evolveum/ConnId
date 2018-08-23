@@ -20,17 +20,18 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
- * Portions Copyrighted 2014 Evolveum
- * Portions Copyrighted 2015 ConnId
+ * Portions Copyrighted 2014-2018 Evolveum
+ * Portions Copyrighted 2015-2018 ConnId
  */
 package org.identityconnectors.framework.impl.api;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Set;
 import org.identityconnectors.common.Assertions;
-import org.identityconnectors.common.Base64;
+import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.api.ConnectorFacade;
 import org.identityconnectors.framework.api.operations.APIOperation;
@@ -68,6 +69,8 @@ import org.identityconnectors.framework.common.serializer.SerializerUtil;
  */
 public abstract class AbstractConnectorFacade implements ConnectorFacade {
 
+    private static final Log LOG = Log.getLog(AbstractConnectorFacade.class);
+
     private final APIConfigurationImpl configuration;
 
     private final String connectorFacadeKey;
@@ -83,7 +86,7 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
         // also, configuration is used as a key in the
         // pool, so it is important that it not be modified.
         byte[] bytes = SerializerUtil.serializeBinaryObject(configuration);
-        connectorFacadeKey = Base64.encode(bytes);
+        connectorFacadeKey = Base64.getEncoder().encodeToString(bytes);
         this.configuration = (APIConfigurationImpl) SerializerUtil.deserializeBinaryObject(bytes);
         // parent ref not included in the clone
         this.configuration.setConnectorInfo(configuration.getConnectorInfo());
@@ -174,7 +177,7 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
             ResultsHandler handler, final OperationOptions options) {
 
         if (LoggingProxy.isLoggable()) {
-            handler = new SearchResultsHandlerLoggingProxy(handler);
+            handler = new SearchResultsHandlerLoggingProxy(handler, LOG, null);
         }
         return ((SearchApiOp) this.getOperationCheckSupported(SearchApiOp.class)).
                 search(objectClass, filter, handler, options);
@@ -190,7 +193,7 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
         return ((UpdateApiOp) this.getOperationCheckSupported(UpdateApiOp.class)).
                 update(objectClass, uid, attrs, options);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -320,24 +323,25 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
         }
         return getOperationImplementation(api);
     }
-    
-    private APIOperation getDeltaOperationCheckSupported(final Class<? extends APIOperation>... apis) {
+
+    @SafeVarargs
+    private final APIOperation getDeltaOperationCheckSupported(final Class<? extends APIOperation>... apis) {
         // check if this operation is supported.
-    	for (Class<? extends APIOperation> api : apis){
-    		if(configuration.isSupportedOperation(api)){
-    			return getOperationImplementation(UpdateDeltaApiOp.class);
-    		}
-    	}
-    	String str = MessageFormat.format(MSG, (Object[]) apis);
+        for (Class<? extends APIOperation> api : apis) {
+            if (configuration.isSupportedOperation(api)) {
+                return getOperationImplementation(UpdateDeltaApiOp.class);
+            }
+        }
+        String str = MessageFormat.format(MSG, (Object[]) apis);
         throw new UnsupportedOperationException(str);
-        
+
     }
 
     /**
      * Creates a new {@link APIOperation} proxy given a handler.
      */
-    protected APIOperation newAPIOperationProxy(final Class<? extends APIOperation> api,
-            final InvocationHandler handler) {
+    protected APIOperation newAPIOperationProxy(
+            final Class<? extends APIOperation> api, final InvocationHandler handler) {
 
         return (APIOperation) Proxy.newProxyInstance(api.getClassLoader(), new Class<?>[] { api }, handler);
     }
@@ -382,6 +386,10 @@ public abstract class AbstractConnectorFacade implements ConnectorFacade {
     protected final APIOperation createLoggingProxy(
             final Class<? extends APIOperation> api, final APIOperation target) {
 
-        return newAPIOperationProxy(api, new LoggingProxy(api, target));
+        return newAPIOperationProxy(api, new LoggingProxy(api, target, getInstanceName()));
+    }
+
+    protected String getInstanceName() {
+        return getAPIConfiguration().getInstanceName();
     }
 }

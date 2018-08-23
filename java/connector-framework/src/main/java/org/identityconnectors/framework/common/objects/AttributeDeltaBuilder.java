@@ -2,7 +2,7 @@
  * ====================
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2017 Evolveum. All rights reserved.
+ * Copyright 2017-2018 Evolveum. All rights reserved.
  *
  * The contents of this file are subject to the terms of the Common Development
  * and Distribution License("CDDL") (the "License").  You may not use this file
@@ -335,7 +335,6 @@ public class AttributeDeltaBuilder {
             throw new IllegalArgumentException(COLLISION_ERROR);
         }
         if (Uid.NAME.equals(name)) {
-            System.out.println("UID");
             return new AttributeDelta(Uid.NAME, null, null, getSingleStringValue());
         } else if (Name.NAME.equals(name)) {
             return new AttributeDelta(Name.NAME, null, null, getSingleStringValue());
@@ -366,9 +365,7 @@ public class AttributeDeltaBuilder {
      */
     private List<Object> getSingleStringValue() {
         checkSingleValue();
-        System.out.println("get" + valuesToReplace.get(0).getClass().toString());
         if (!(valuesToReplace.get(0) instanceof String)) {
-            System.out.println("ou");
             throw new IllegalArgumentException("ValueToReplace of attributeDelta '" + name
                     + "' must be an instance of String.");
         }
@@ -378,13 +375,12 @@ public class AttributeDeltaBuilder {
     private List<Object> addValuesInternal(final Iterable<?> values, List<Object> ListValues) {
         if (values != null) {
             // make sure the list is ready to receive values.
-            List<Object> ret = new ArrayList<Object>();
+            List<Object> ret = new ArrayList<>();
             if (ListValues != null) {
                 ret.addAll(ListValues);
             }
             // add each value checking to make sure its correct
             for (Object v : values) {
-                System.out.println(v.getClass());
                 FrameworkUtil.checkAttributeValue(name, v);
                 ret.add(v);
             }

@@ -19,21 +19,22 @@
  * enclosed by brackets [] replaced by your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
+ * Portions Copyrighted 2018 ConnId
  */
 package org.identityconnectors.common.logging;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.identityconnectors.common.StringPrintWriter;
-import static org.testng.Assert.assertTrue;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Simple tests of {@link StdOutLogger}.
@@ -67,10 +68,10 @@ public class StdOutLoggerTests {
             System.setOut(tmp);
         }
         // okay check the results..
-        String logRecord = new String(bout.toByteArray(), "UTF-8");
+        String logRecord = new String(bout.toByteArray(), StandardCharsets.UTF_8);
         BufferedReader rdr = new BufferedReader(new StringReader(logRecord));
         String records[] = rdr.readLine().split("\t");
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String record : records) {
             String frag[] = record.split(":");
             map.put(frag[0].trim(), frag[1].trim());
