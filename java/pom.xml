@@ -30,7 +30,7 @@
   <name>ConnId</name>
   <groupId>net.tirasa.connid</groupId>
   <artifactId>connid</artifactId>
-  <version>1.4.3.43</version>
+  <version>1.4.3.47</version>
   <packaging>pom</packaging>
 
   <!-- maven repository on sonatype -->
