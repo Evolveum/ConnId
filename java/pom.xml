@@ -30,7 +30,7 @@
   <name>ConnId</name>
   <groupId>net.tirasa.connid</groupId>
   <artifactId>connid</artifactId>
-  <version>1.4.3.47</version>
+  <version>1.5.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <!-- maven repository on sonatype -->
@@ -54,6 +54,7 @@
     <connection>scm:git:git@github.com:Tirasa/ConnId.git</connection>
     <url>scm:git:git@github.com:Tirasa/ConnId.git</url>
     <developerConnection>scm:git:git@github.com:Tirasa/ConnId.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
   
   <distributionManagement>
@@ -95,12 +96,12 @@
   <properties>
     <parent.path>${basedir}</parent.path>
 
-    <groovy.version>2.5.0</groovy.version>
+    <groovy.version>2.5.5</groovy.version>
 
     <logback.version>1.2.3</logback.version>
     <slf4j.version>1.7.25</slf4j.version>
 
-    <junit.version>5.2.0</junit.version>
+    <junit.version>5.3.2</junit.version>
 
     <targetJdk>1.8</targetJdk>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -206,7 +207,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
+          <version>3.8.0</version>
           <configuration>
             <source>${targetJdk}</source>
             <target>${targetJdk}</target>
@@ -232,7 +233,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.0</version>
+          <version>2.22.1</version>
           <configuration>
             <includes>
               <include>**/*Tests.java</include>
@@ -242,7 +243,7 @@
             <argLine>-Xms512m -Xmx1024m -Xss256k</argLine>
           </configuration>
         </plugin>
-        
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
@@ -264,7 +265,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.1.0</version>
         </plugin>
 
         <plugin>
@@ -476,6 +477,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.10.4</version>
+        <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
