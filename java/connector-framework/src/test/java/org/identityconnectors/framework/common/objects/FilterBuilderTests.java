@@ -24,9 +24,7 @@
  */
 package org.identityconnectors.framework.common.objects;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.identityconnectors.framework.common.objects.filter.Filter;
 import org.identityconnectors.framework.common.objects.filter.FilterBuilder;
@@ -67,6 +65,32 @@ public class FilterBuilderTests {
         bld.setName(Integer.toString(3234));
         bld.addAttribute("adflk", "fafkajwe");
         assertFalse(filter.accept(bld.build()));
+    }
+
+    @Test
+    public void equalsFilterUid() {
+        Uid uid = new Uid("uid-val");
+        Filter filter = FilterBuilder.equalTo(uid);
+
+        assertTrue(filter.accept(
+                new ConnectorObjectBuilder()
+                        .setUid(new Uid("uid-val"))
+                        .setName("ignored")
+                        .build()));
+
+        // equals filter considers only attribute name+value, not nameHint for Uid
+        assertTrue(filter.accept(
+                new ConnectorObjectBuilder()
+                        .setUid(new Uid("uid-val", "name-hint"))
+                        .setName("ignored")
+                        .build()));
+
+        // equals filter considers only attribute name+value, not revision for Uid
+        assertTrue(filter.accept(
+                new ConnectorObjectBuilder()
+                        .setUid(new Uid("uid-val", "revision", null))
+                        .setName("ignored")
+                        .build()));
     }
 
     // =======================================================================
