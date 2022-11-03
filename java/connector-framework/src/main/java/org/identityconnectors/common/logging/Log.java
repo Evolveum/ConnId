@@ -203,7 +203,7 @@ public final class Log {
             final Object... args) {
         if (isLoggable(level)) {
             String message = format;
-            if (format != null && args != null) {
+            if (format != null && args != null && args.length > 0) {
                 // consider using thread local pattern to cache these for
                 // performance the pattern will always may always changed.
                 message = MessageFormat.format(format, args);
