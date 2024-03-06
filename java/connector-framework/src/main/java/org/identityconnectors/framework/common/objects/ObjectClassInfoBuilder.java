@@ -36,6 +36,7 @@ public final class ObjectClassInfoBuilder {
 
     private boolean isContainer;
     private boolean isAuxiliary;
+    private boolean isAssociated;
     private String type;
     private Map<String, AttributeInfo> attributeInfoMap;
 
@@ -101,7 +102,11 @@ public final class ObjectClassInfoBuilder {
 		this.isAuxiliary = isAuxiliary;
 	}
 
-	/**
+    public void setAssociated(boolean associated) {
+        isAssociated = associated;
+    }
+
+    /**
      * Constructs an instance of {@link ObjectClassInfo} with any
      * characteristics that were previously specified using this builder.
      *
@@ -113,7 +118,8 @@ public final class ObjectClassInfoBuilder {
         if (!attributeInfoMap.containsKey(Name.NAME)) {
             attributeInfoMap.put(Name.NAME, Name.INFO);
         }
-        return new ObjectClassInfo(type, CollectionUtil.newSet(attributeInfoMap.values()),
-                isContainer, isAuxiliary);
+        return new ObjectClassInfo(
+                type, CollectionUtil.newSet(attributeInfoMap.values()),
+                isContainer, isAuxiliary, isAssociated);
     }
 }

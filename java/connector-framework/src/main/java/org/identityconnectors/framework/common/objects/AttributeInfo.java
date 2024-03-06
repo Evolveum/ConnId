@@ -181,6 +181,10 @@ public final class AttributeInfo {
      * (a value form the Subtype enumeration). The subtype may also contain an URI
      * that specifies a custom subtype that the connector recognizes and it is not
      * defined in the pre-defined subtype enumeration.
+     *
+     * For {@link ConnectorObjectReference} attributes, the subtype contains
+     * the name of the referenced object class. *TEMPORARY*; in the future, we will probably have
+     * fully-functional definitions of uni- and bi-directional references.
      * 
      * @return attribute subtype.
      */

@@ -417,6 +417,41 @@ class CommonObjectHandlers {
             }
         });
 
+        HANDLERS.add(new AbstractObjectSerializationHandler(ConnectorObjectIdentification.class,
+                "ConnectorObjectIdentification") {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public Object deserialize(ObjectDecoder decoder) {
+                return new ConnectorObjectIdentification(
+                        (ObjectClass) decoder.readObjectField("ObjectClass", ObjectClass.class, null),
+                        (Set<? extends Attribute>) decoder.readObjectField("Attributes", Set.class, null));
+            }
+
+            @Override
+            public void serialize(final Object object, final ObjectEncoder encoder) {
+                final ConnectorObjectIdentification val = (ConnectorObjectIdentification) object;
+                encoder.writeObjectField("ObjectClass", val.getObjectClass(), true);
+                encoder.writeObjectField("Attributes", val.getAttributes(), true);
+            }
+        });
+
+        HANDLERS.add(new AbstractObjectSerializationHandler(ConnectorObjectReference.class,
+                "ConnectorObjectReference") {
+
+            @Override
+            public Object deserialize(ObjectDecoder decoder) {
+                return new ConnectorObjectReference(
+                        (BaseConnectorObject) decoder.readObjectField("ReferencedObject", BaseConnectorObject.class, null));
+            }
+
+            @Override
+            public void serialize(final Object object, final ObjectEncoder encoder) {
+                final ConnectorObjectReference val = (ConnectorObjectReference) object;
+                encoder.writeObjectField("ReferencedObject", val.getReferencedValue(), true);
+            }
+        });
+
         HANDLERS.add(new AbstractObjectSerializationHandler(Name.class, "Name") {
 
             @Override
@@ -455,12 +490,13 @@ class CommonObjectHandlers {
                 final String type = decoder.readStringField("type", null);
                 final boolean container = decoder.readBooleanField("container", false);
                 final boolean auxiliary = decoder.readBooleanField("auxiliary", false);
+                final boolean associated = decoder.readBooleanField("associated", false);
 
                 @SuppressWarnings("unchecked")
                 final Set<AttributeInfo> attrInfo =
                         (Set) decoder.readObjectField("AttributeInfos", Set.class, null);
 
-                return new ObjectClassInfo(type, attrInfo, container, auxiliary);
+                return new ObjectClassInfo(type, attrInfo, container, auxiliary, associated);
             }
 
             @Override

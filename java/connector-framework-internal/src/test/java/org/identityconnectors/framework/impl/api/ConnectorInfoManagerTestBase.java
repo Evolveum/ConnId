@@ -23,12 +23,6 @@
  */
 package org.identityconnectors.framework.impl.api;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -58,21 +52,16 @@ import org.identityconnectors.framework.api.operations.SyncApiOp;
 import org.identityconnectors.framework.common.FrameworkUtilTestHelpers;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.exceptions.OperationTimeoutException;
-import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
-import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.identityconnectors.framework.common.objects.OperationOptions;
-import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
-import org.identityconnectors.framework.common.objects.ScriptContextBuilder;
-import org.identityconnectors.framework.common.objects.SyncDelta;
-import org.identityconnectors.framework.common.objects.SyncToken;
+import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.impl.api.local.ConnectorPoolManager;
+import org.identityconnectors.testconnector.TstConnector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ConnectorInfoManagerTestBase {
 
@@ -346,6 +335,55 @@ public abstract class ConnectorInfoManagerTestBase {
         facade.search(ObjectClass.ACCOUNT, null, obj -> true, null);
         long end = System.currentTimeMillis();
         System.out.println("Test took: " + (end - start) / 1000);
+    }
+
+    /**
+     * Checks that the connector can return objects with references.
+     */
+    @Test
+    public void testSearchWithReferences() throws Exception {
+        ConnectorInfoManager manager = getConnectorInfoManager();
+        ConnectorInfo info = findConnectorInfo(manager,
+                "1.0.0.0",
+                "org.identityconnectors.testconnector.TstConnector");
+
+        ConnectorFacade facade = ConnectorFacadeFactory.getInstance()
+                .newInstance(info.createDefaultAPIConfiguration());
+
+        final List<ConnectorObject> results = new ArrayList<>();
+
+        facade.search(TstConnector.userObjectClass(), null, (final ConnectorObject obj) -> {
+            results.add(obj);
+            return true;
+        }, null);
+
+        assertEquals(2, results.size());
+        ConnectorObject user100 = results.get(0);
+        assertEquals(TstConnector.USER_100_UID, user100.getUid().getUidValue());
+        assertEquals(TstConnector.USER_100_NAME, user100.getName().getNameValue());
+
+        List<?> user100Groups = user100.getAttributeByName(TstConnector.MEMBER_OF_ATTR_NAME).getValue();
+
+        assertEquals(2, user100Groups.size());
+        ConnectorObjectReference firstGroupRef = (ConnectorObjectReference) user100Groups.get(0);
+        assertTrue(firstGroupRef.hasObject());
+        ConnectorObject firstGroup = firstGroupRef.getReferencedObject();
+        assertEquals(TstConnector.GROUP_1_UID, firstGroup.getUid().getUidValue());
+        assertEquals(TstConnector.GROUP_1_NAME, firstGroup.getName().getNameValue());
+        assertEquals(2, firstGroup.getAttributeByName(TstConnector.MEMBERS_ATTR_NAME).getValue().size());
+
+        ConnectorObjectReference secondGroupRef = (ConnectorObjectReference) user100Groups.get(1);
+        assertTrue(secondGroupRef.hasObject());
+        ConnectorObject secondGroup = secondGroupRef.getReferencedObject();
+        assertEquals(TstConnector.GROUP_2_UID, secondGroup.getUid().getUidValue());
+        assertEquals(TstConnector.GROUP_2_NAME, secondGroup.getName().getNameValue());
+        List<?> memberRefs = secondGroup.getAttributeByName(TstConnector.MEMBERS_ATTR_NAME).getValue();
+        assertEquals(1, memberRefs.size());
+        ConnectorObjectReference firstMemberRef = (ConnectorObjectReference) memberRefs.get(0);
+        assertFalse(firstMemberRef.hasObject());
+        ConnectorObjectIdentification firstMemberIds = (ConnectorObjectIdentification) firstMemberRef.getReferencedValue();
+        assertEquals(TstConnector.USER_100_NAME, firstMemberIds.getAttributeByName(Name.NAME).getValue().get(0));
+        assertEquals(1, firstMemberIds.getAttributes().size());
     }
 
     @RepeatedTest(100)
