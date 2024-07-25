@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.identityconnectors.framework.common.objects.*;
+import org.identityconnectors.framework.common.objects.AttributeInfo.RoleInReference;
 import org.identityconnectors.framework.common.objects.filter.AbstractFilterTranslator;
 import org.identityconnectors.framework.common.objects.filter.FilterTranslator;
 import org.identityconnectors.framework.spi.Configuration;
@@ -48,8 +49,12 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
 
     public static final String USER_CLASS_NAME = "user";
     public static final String GROUP_CLASS_NAME = "group";
+    public static final String ACCESS_CLASS_NAME = "access";
     public static final String MEMBER_OF_ATTR_NAME = "memberOf";
     public static final String MEMBERS_ATTR_NAME = "members";
+    public static final String ACCESS_ATTR_NAME = "access";
+    public static final String GROUP_ATTR_NAME = "group";
+    public static final String GROUP_MEMBERSHIP_REFERENCE_TYPE_NAME = "groupMembership";
 
     // test objects
     public static final String USER_100_UID = "b2ca2464-8aff-4bc4-9b7f-e68ad27d9f3d";
@@ -274,10 +279,19 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
                                         .build())
                         .addAttributeInfo(
                                 new AttributeInfoBuilder(MEMBER_OF_ATTR_NAME, ConnectorObjectReference.class)
-                                        .setSubtype(GROUP_CLASS_NAME)
+                                        .setReferencedObjectClassName(GROUP_CLASS_NAME)
+                                        .setSubtype(GROUP_MEMBERSHIP_REFERENCE_TYPE_NAME)
+                                        .setRoleInReference(RoleInReference.SUBJECT.toString())
+                                        .setMultiValued(true)
+                                        .build())
+                        .addAttributeInfo(
+                                new AttributeInfoBuilder(ACCESS_ATTR_NAME, ConnectorObjectReference.class)
+                                        .setReferencedObjectClassName(ACCESS_CLASS_NAME)
+                                        .setRoleInReference(RoleInReference.SUBJECT.toString())
                                         .setMultiValued(true)
                                         .build())
                         .build());
+
         schemaBuilder.defineObjectClass(
                 new ObjectClassInfoBuilder()
                         .setType(GROUP_CLASS_NAME)
@@ -291,10 +305,25 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
                                         .build())
                         .addAttributeInfo(
                                 new AttributeInfoBuilder(MEMBERS_ATTR_NAME, ConnectorObjectReference.class)
-                                        .setSubtype(USER_CLASS_NAME)
+                                        .setReferencedObjectClassName(USER_CLASS_NAME)
+                                        .setSubtype(GROUP_MEMBERSHIP_REFERENCE_TYPE_NAME)
+                                        .setRoleInReference(RoleInReference.OBJECT.toString())
                                         .setMultiValued(true)
                                         .build())
                         .build());
+
+        // A bit artificial class to test object references: defines which user
+        // has what access (e.g., read, write, ...) to what group
+        schemaBuilder.defineObjectClass(
+                new ObjectClassInfoBuilder()
+                        .setType(ACCESS_CLASS_NAME)
+                        .setEmbedded(true)
+                        .addAttributeInfo(
+                                new AttributeInfoBuilder(GROUP_ATTR_NAME, ConnectorObjectReference.class)
+                                        .setReferencedObjectClassName(GROUP_CLASS_NAME)
+                                        .build())
+                        .build());
+
         return schemaBuilder.build();
     }
 

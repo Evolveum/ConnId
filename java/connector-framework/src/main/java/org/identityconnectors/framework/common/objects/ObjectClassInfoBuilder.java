@@ -36,7 +36,7 @@ public final class ObjectClassInfoBuilder {
 
     private boolean isContainer;
     private boolean isAuxiliary;
-    private boolean isAssociated;
+    private boolean isEmbedded;
     private String type;
     private Map<String, AttributeInfo> attributeInfoMap;
 
@@ -102,8 +102,9 @@ public final class ObjectClassInfoBuilder {
 		this.isAuxiliary = isAuxiliary;
 	}
 
-    public void setAssociated(boolean associated) {
-        isAssociated = associated;
+    public ObjectClassInfoBuilder setEmbedded(boolean embedded) {
+        isEmbedded = embedded;
+        return this;
     }
 
     /**
@@ -120,6 +121,6 @@ public final class ObjectClassInfoBuilder {
         }
         return new ObjectClassInfo(
                 type, CollectionUtil.newSet(attributeInfoMap.values()),
-                isContainer, isAuxiliary, isAssociated);
+                isContainer, isAuxiliary, isEmbedded);
     }
 }

@@ -337,9 +337,40 @@ public abstract class ConnectorInfoManagerTestBase {
         System.out.println("Test took: " + (end - start) / 1000);
     }
 
-    /**
-     * Checks that the connector can return objects with references.
-     */
+    /** Checks the schema (mainly regarding reference attributes). */
+    @Test
+    public void testSchema() throws Exception {
+        ConnectorInfoManager manager = getConnectorInfoManager();
+        ConnectorInfo info = findConnectorInfo(manager,
+                "1.0.0.0",
+                "org.identityconnectors.testconnector.TstConnector");
+
+        ConnectorFacade facade = ConnectorFacadeFactory.getInstance()
+                .newInstance(info.createDefaultAPIConfiguration());
+        Schema schema = facade.schema();
+
+        assertEquals(5, schema.getObjectClassInfo().size());
+
+        ObjectClassInfo userObjectClass = schema.findObjectClassInfo(TstConnector.USER_CLASS_NAME);
+        assertNotNull(userObjectClass);
+        userObjectClass.getAttributeInfo().stream()
+                .filter(attr -> attr.getName().equals(TstConnector.MEMBER_OF_ATTR_NAME))
+                .findFirst()
+                .ifPresentOrElse(attr -> {
+                    assertEquals(TstConnector.GROUP_CLASS_NAME, attr.getReferencedObjectClassName());
+                    assertEquals(TstConnector.GROUP_MEMBERSHIP_REFERENCE_TYPE_NAME, attr.getSubtype());
+                    assertEquals(AttributeInfo.RoleInReference.SUBJECT.toString(), attr.getRoleInReference());
+                    assertTrue(attr.isMultiValued());
+                }, () -> {
+                    fail("Attribute " + TstConnector.MEMBER_OF_ATTR_NAME + " not found");
+                });
+
+        ObjectClassInfo accessObjectClass = schema.findObjectClassInfo(TstConnector.ACCESS_CLASS_NAME);
+        assertNotNull(accessObjectClass);
+        assertTrue(accessObjectClass.isEmbedded());
+    }
+
+    /** Checks that the connector can return objects with references. */
     @Test
     public void testSearchWithReferences() throws Exception {
         ConnectorInfoManager manager = getConnectorInfoManager();
@@ -367,21 +398,21 @@ public abstract class ConnectorInfoManagerTestBase {
         assertEquals(2, user100Groups.size());
         ConnectorObjectReference firstGroupRef = (ConnectorObjectReference) user100Groups.get(0);
         assertTrue(firstGroupRef.hasObject());
-        ConnectorObject firstGroup = firstGroupRef.getReferencedObject();
+        ConnectorObject firstGroup = (ConnectorObject) firstGroupRef.getValue();
         assertEquals(TstConnector.GROUP_1_UID, firstGroup.getUid().getUidValue());
         assertEquals(TstConnector.GROUP_1_NAME, firstGroup.getName().getNameValue());
         assertEquals(2, firstGroup.getAttributeByName(TstConnector.MEMBERS_ATTR_NAME).getValue().size());
 
         ConnectorObjectReference secondGroupRef = (ConnectorObjectReference) user100Groups.get(1);
         assertTrue(secondGroupRef.hasObject());
-        ConnectorObject secondGroup = secondGroupRef.getReferencedObject();
+        ConnectorObject secondGroup = (ConnectorObject) secondGroupRef.getValue();
         assertEquals(TstConnector.GROUP_2_UID, secondGroup.getUid().getUidValue());
         assertEquals(TstConnector.GROUP_2_NAME, secondGroup.getName().getNameValue());
         List<?> memberRefs = secondGroup.getAttributeByName(TstConnector.MEMBERS_ATTR_NAME).getValue();
         assertEquals(1, memberRefs.size());
         ConnectorObjectReference firstMemberRef = (ConnectorObjectReference) memberRefs.get(0);
         assertFalse(firstMemberRef.hasObject());
-        ConnectorObjectIdentification firstMemberIds = (ConnectorObjectIdentification) firstMemberRef.getReferencedValue();
+        ConnectorObjectIdentification firstMemberIds = (ConnectorObjectIdentification) firstMemberRef.getValue();
         assertEquals(TstConnector.USER_100_NAME, firstMemberIds.getAttributeByName(Name.NAME).getValue().get(0));
         assertEquals(1, firstMemberIds.getAttributes().size());
     }
@@ -616,7 +647,7 @@ public abstract class ConnectorInfoManagerTestBase {
         }
     }
 
-    protected final File getTestBundlesDir() throws URISyntaxException {
+    final File getTestBundlesDir() throws URISyntaxException {
         URL testOutputDirectory = ConnectorInfoManagerTestBase.class.getResource("/");
         File testBundlesDir = new File(testOutputDirectory.toURI());
         if (!testBundlesDir.isDirectory()) {
@@ -625,12 +656,20 @@ public abstract class ConnectorInfoManagerTestBase {
         return testBundlesDir;
     }
 
-    protected final List<URL> getTestBundles() throws Exception {
-        File testBundlesDir = getTestBundlesDir();
+    // Originally, this method used getTestBundlesDir. We stopped doing that in order to allow tests to be run directly from IDE.
+    List<URL> getTestBundles() {
         List<URL> rv = new ArrayList<>();
-        rv.add(IOUtil.makeURL(testBundlesDir, "testbundlev1.jar"));
-        rv.add(IOUtil.makeURL(testBundlesDir, "testbundlev2.jar"));
+        rv.add(getTestBundleUrl("testbundlev1.jar"));
+        rv.add(getTestBundleUrl("testbundlev2.jar"));
         return rv;
+    }
+
+    private URL getTestBundleUrl(String name) {
+        URL url = ConnectorInfoManagerTestBase.class.getResource("/" + name);
+        if (url == null) {
+            throw new IllegalStateException("Bundle '" + name + "' could not be found");
+        }
+        return url;
     }
 
     /**

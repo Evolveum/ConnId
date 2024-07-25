@@ -378,6 +378,8 @@ class CommonObjectHandlers {
                 builder.setFlags(flags);
                 builder.setNativeName(decoder.readStringField("nativeName", null));
                 builder.setSubtype(decoder.readStringField("subtype", null));
+                builder.setReferencedObjectClassName(decoder.readStringField("referencedObjectClassName", null));
+                builder.setRoleInReference(decoder.readStringField("roleInReference", null));
                 return builder.build();
             }
 
@@ -392,6 +394,8 @@ class CommonObjectHandlers {
                 }
                 encoder.writeStringField("nativeName", val.getNativeName());
                 encoder.writeStringField("subtype", val.getSubtype());
+                encoder.writeStringField("referencedObjectClassName", val.getReferencedObjectClassName());
+                encoder.writeStringField("roleInReference", val.getRoleInReference());
             }
         });
 
@@ -442,13 +446,13 @@ class CommonObjectHandlers {
             @Override
             public Object deserialize(ObjectDecoder decoder) {
                 return new ConnectorObjectReference(
-                        (BaseConnectorObject) decoder.readObjectField("ReferencedObject", BaseConnectorObject.class, null));
+                        (BaseConnectorObject) decoder.readObjectField("Value", BaseConnectorObject.class, null));
             }
 
             @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ConnectorObjectReference val = (ConnectorObjectReference) object;
-                encoder.writeObjectField("ReferencedObject", val.getReferencedValue(), true);
+                encoder.writeObjectField("Value", val.getValue(), true);
             }
         });
 
@@ -490,13 +494,13 @@ class CommonObjectHandlers {
                 final String type = decoder.readStringField("type", null);
                 final boolean container = decoder.readBooleanField("container", false);
                 final boolean auxiliary = decoder.readBooleanField("auxiliary", false);
-                final boolean associated = decoder.readBooleanField("associated", false);
+                final boolean embedded = decoder.readBooleanField("embedded", false);
 
                 @SuppressWarnings("unchecked")
                 final Set<AttributeInfo> attrInfo =
                         (Set) decoder.readObjectField("AttributeInfos", Set.class, null);
 
-                return new ObjectClassInfo(type, attrInfo, container, auxiliary, associated);
+                return new ObjectClassInfo(type, attrInfo, container, auxiliary, embedded);
             }
 
             @Override
@@ -506,6 +510,7 @@ class CommonObjectHandlers {
                 encoder.writeStringField("type", val.getType());
                 encoder.writeBooleanField("container", val.isContainer());
                 encoder.writeBooleanField("auxiliary", val.isAuxiliary());
+                encoder.writeBooleanField("embedded", val.isEmbedded());
                 encoder.writeObjectField("AttributeInfos", val.getAttributeInfo(), true);
             }
         });

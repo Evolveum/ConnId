@@ -45,7 +45,7 @@ public final class ObjectClassInfo {
     private final Set<AttributeInfo> attributeInfos;
     private final boolean isContainer;
     private final boolean isAuxiliary;
-    private final boolean isAssociated;
+    private final boolean isEmbedded;
 
     /**
      * Public only for serialization; Use ObjectClassInfoBuilder instead.
@@ -58,13 +58,13 @@ public final class ObjectClassInfo {
      *            True if this can contain other object classes.
      */
     public ObjectClassInfo(
-            String type, Set<AttributeInfo> attrInfo, boolean isContainer, boolean isAuxiliary, boolean isAssociated) {
+            String type, Set<AttributeInfo> attrInfo, boolean isContainer, boolean isAuxiliary, boolean isEmbedded) {
         Assertions.nullCheck(type, "type");
         this.type = type;
         attributeInfos = CollectionUtil.newReadOnlySet(attrInfo);
         this.isContainer = isContainer;
         this.isAuxiliary = isAuxiliary;
-        this.isAssociated = isAssociated;
+        this.isEmbedded = isEmbedded;
         // check to make sure name exists and if not throw
         Map<String, AttributeInfo> map = AttributeInfoUtil.toMap(attrInfo);
         if (!map.containsKey(Name.NAME)) {
@@ -85,11 +85,15 @@ public final class ObjectClassInfo {
 	}
 
     /**
-     * Is this an associated class? Objects of those classes may be strongly bound to their owning objects, sometimes
-     * to the level that they cannot live separately from them. TODO this is only an idea, there is no implementation yet
+     * If {@code true}, objects of this class are meant to be embedded in other objects.
+     * (They still may or may not be queryable or updatable directly.)
+     *
+     * Currently, this information serves just as a hint for the client code. In the future,
+     * we may relax some of requirements on embedded objects, for example, they may not need to have
+     * the {@link Name} and/or {@link Uid} attributes.
      */
-    public boolean isAssociated() {
-        return isAssociated;
+    public boolean isEmbedded() {
+        return isEmbedded;
     }
 
 	public Set<AttributeInfo> getAttributeInfo() {
@@ -142,7 +146,7 @@ public final class ObjectClassInfo {
         if (!isAuxiliary == other.isAuxiliary) {
             return false;
         }
-        if (!isAssociated == other.isAssociated) {
+        if (!isEmbedded == other.isEmbedded) {
             return false;
         }
         return true;

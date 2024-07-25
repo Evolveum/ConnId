@@ -25,46 +25,47 @@ package org.identityconnectors.framework.common.objects;
 import java.util.Objects;
 
 /**
- * Reference to a connector object. It may contain the identifier/identifiers only (e.g. Uid, Name, or other attributes),
- * or it may contain the whole object, fetched partially or fully.
+ * Reference to a connector object.
+ *
+ * It may contain the identifier/identifiers only (e.g. {@link Uid}, {@link Name}, or other attributes), or it may contain
+ * the whole object, fetched partially or fully.
+ *
+ * Typical use case:
+ *
+ * A user in Active Directory has a multivalued reference attribute `group` that points to groups the user is a member of.
+ * The attribute is similar to `memberOf` attribute, but instead of holding string DNs of the groups, it holds these references
+ * as {@link ConnectorObjectReference}s (which may contain DNs, UUIDs, or even partially or fully fetched group objects,
+ * depending on the situation).
+ *
+ * Other use cases:
+ *
+ * Until ConnId supports structured (complex) attributes, the reference attributes provide an alternative solution.
+ * The complex values of such attributes are represented by embedded connector objects.
+ *
+ * For example, HR system can model contracts of a person as a multivalued reference attribute {@code contract} on
+ * object class {@code person} that contains objects of the object class {@code contract}. These objects are provided
+ * by value, i.e., being embedded right in the references.
  */
 public class ConnectorObjectReference {
 
-    /** Must be either {@link ConnectorObject} or {@link ConnectorObjectIdentification}. */
-    private final BaseConnectorObject referencedObject;
+    /** The referenced object or its identification. */
+    private final BaseConnectorObject value;
 
-    public ConnectorObjectReference(BaseConnectorObject referencedObject) {
-        if (!(referencedObject instanceof ConnectorObject)
-                && !(referencedObject instanceof ConnectorObjectIdentification)) {
+    public ConnectorObjectReference(BaseConnectorObject value) {
+        if (!(value instanceof ConnectorObject)
+                && !(value instanceof ConnectorObjectIdentification)) {
             throw new IllegalArgumentException("Referenced object must be either ConnectorObject or ConnectorObjectIdentification");
         }
-        this.referencedObject = referencedObject;
+        this.value = value;
     }
 
     /** True if the object is present. False if only the identifiers are. */
     public boolean hasObject() {
-        return referencedObject instanceof ConnectorObject;
+        return value instanceof ConnectorObject;
     }
 
-    /** Returns {@link ConnectorObject} or {@link ConnectorObjectIdentification}, whatever is present. */
-    public BaseConnectorObject getReferencedValue() {
-        return Objects.requireNonNull(referencedObject);
-    }
-
-    /** Returns {@link ConnectorObject} or fails if there's none. */
-    public ConnectorObject getReferencedObject() {
-        if (referencedObject instanceof ConnectorObject) {
-            return (ConnectorObject) referencedObject;
-        } else {
-            throw new IllegalStateException("Referenced object is not available");
-        }
-    }
-
-    public ConnectorObjectIdentification getReferencedObjectIdentification() {
-        if (referencedObject instanceof ConnectorObjectIdentification) {
-            return (ConnectorObjectIdentification) referencedObject;
-        } else {
-            return ((ConnectorObject) referencedObject).getIdentification();
-        }
+    /** Returns the value of the reference (the referenced object or its identification). */
+    public BaseConnectorObject getValue() {
+        return Objects.requireNonNull(value);
     }
 }
