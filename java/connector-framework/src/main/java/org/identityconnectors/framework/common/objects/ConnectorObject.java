@@ -46,6 +46,9 @@ public final class ConnectorObject extends BaseConnectorObject {
      */
     public ConnectorObject(ObjectClass objectClass, Set<? extends Attribute> attributes) {
         super(objectClass, attributes);
+        if (objectClass == null) {
+            throw new IllegalArgumentException("ObjectClass may not be null");
+        }
         // make sure the Uid was added..
         if (!this.attributeMap.containsKey(Uid.NAME)) {
             throw new IllegalArgumentException("The Attribute set must contain a 'Uid'.");

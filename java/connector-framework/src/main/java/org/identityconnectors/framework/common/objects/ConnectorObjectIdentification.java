@@ -31,7 +31,8 @@ import java.util.Set;
  * The developer of a Connector will use a {@link ConnectorObjectBuilder} to
  * construct instances of ConnectorObject.
  *
- * Similar to {@link ConnectorObject} but with no requirements about {@link Uid} and {@link Name} presence.
+ * Similar to {@link ConnectorObject} but with no requirements about object class information
+ * and the presence of {@link Uid} and {@link Name} attributes.
  */
 public final class ConnectorObjectIdentification extends BaseConnectorObject {
 

@@ -37,9 +37,7 @@ public abstract class BaseConnectorObject {
     final Map<String, Attribute> attributeMap;
 
     BaseConnectorObject(ObjectClass objectClass, Set<? extends Attribute> attributes) {
-        if (objectClass == null) {
-            throw new IllegalArgumentException("ObjectClass may not be null");
-        }
+        // For connector object identification, it is legal to have no object class information.
         if (ObjectClass.ALL.equals(objectClass)) {
             throw new IllegalArgumentException("Connector object class can not be type of __ALL__");
         }

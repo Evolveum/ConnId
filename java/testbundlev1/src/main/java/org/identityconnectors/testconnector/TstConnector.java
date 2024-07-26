@@ -195,7 +195,7 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
         return new ConnectorObjectReference(
                 new ConnectorObjectBuilder()
                         .setName(name)
-                        .setObjectClass(new ObjectClass(USER_CLASS_NAME))
+                        .setObjectClass(null) // intentionally not setting object class here
                         .buildIdentification());
     }
 
