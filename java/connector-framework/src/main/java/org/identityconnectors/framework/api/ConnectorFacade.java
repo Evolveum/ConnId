@@ -40,7 +40,7 @@ import org.identityconnectors.framework.api.operations.*;
  */
 public interface ConnectorFacade extends CreateApiOp, DeleteApiOp, SearchApiOp, UpdateApiOp, UpdateDeltaApiOp,
         SchemaApiOp, AuthenticationApiOp, ResolveUsernameApiOp, GetApiOp, ValidateApiOp, TestApiOp,
-        ScriptOnConnectorApiOp, ScriptOnResourceApiOp, SyncApiOp, DiscoverConfigurationApiOp {
+        ScriptOnConnectorApiOp, ScriptOnResourceApiOp, SyncApiOp, DiscoverConfigurationApiOp, PartialSchemaApiOp {
 
     /**
      * Gets the unique generated identifier of this ConnectorFacade.

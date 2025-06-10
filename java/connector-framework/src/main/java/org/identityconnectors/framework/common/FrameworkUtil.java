@@ -91,6 +91,7 @@ public final class FrameworkUtil {
         SPI_TO_API.put(ScriptOnResourceOp.class, ScriptOnResourceApiOp.class);
         SPI_TO_API.put(SyncOp.class, SyncApiOp.class);
         SPI_TO_API.put(DiscoverConfigurationOp.class, DiscoverConfigurationApiOp.class);
+        SPI_TO_API.put(PartialSchemaOp.class, PartialSchemaApiOp.class);
     }
 
     /**
