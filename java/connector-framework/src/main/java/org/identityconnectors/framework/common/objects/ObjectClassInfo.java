@@ -27,6 +27,7 @@ import static org.identityconnectors.framework.common.objects.NameUtil.nameHashC
 import static org.identityconnectors.framework.common.objects.NameUtil.namesEqual;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.identityconnectors.common.Assertions;
@@ -51,19 +52,23 @@ public final class ObjectClassInfo {
 
     private final boolean isEmbedded;
 
+    private final String description;
+
     /**
      * Public only for serialization; Use ObjectClassInfoBuilder instead.
      *
      * @param type The name of the object class
      * @param attrInfo The attributes of the object class.
      * @param isContainer True if this can contain other object classes.
+     * @param description The description of the object class.
      */
     public ObjectClassInfo(
             final String type,
             final Set<AttributeInfo> attrInfo,
             final boolean isContainer,
             final boolean isAuxiliary,
-            final boolean isEmbedded) {
+            final boolean isEmbedded,
+            final String description) {
 
         Assertions.nullCheck(type, "type");
         this.type = type;
@@ -76,6 +81,7 @@ public final class ObjectClassInfo {
         if (!map.containsKey(Name.NAME)) {
             throw new IllegalArgumentException("Missing 'Name' attribute info.");
         }
+        this.description = description;
     }
 
     public boolean isContainer() {
@@ -110,6 +116,14 @@ public final class ObjectClassInfo {
         return type;
     }
 
+    /**
+     * Returns the description of this {@link ObjectClass}.
+     * Can be used to determine the potential use of the {@link ObjectClass}.
+     * @return a string description of this {@link ObjectClass}
+     */
+    public String getDescription() {
+        return description;
+    }
     /**
      * Determines if the 'name' matches this {@link ObjectClassInfo}.
      *
@@ -148,6 +162,9 @@ public final class ObjectClassInfo {
             return false;
         }
         if (!isAuxiliary == other.isAuxiliary) {
+            return false;
+        }
+        if (!Objects.equals(description, other.getDescription())) {
             return false;
         }
         return !isEmbedded != other.isEmbedded;
