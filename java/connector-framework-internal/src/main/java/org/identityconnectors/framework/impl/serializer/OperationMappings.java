@@ -65,5 +65,7 @@ class OperationMappings {
         "SyncApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(DiscoverConfigurationApiOp.class,
                 "DiscoverConfigurationApiOp"));
+        MAPPINGS.add(new ObjectTypeMapperImpl(PartialSchemaApiOp.class,
+                "PartialSchemaApiOp"));
     }
 }
