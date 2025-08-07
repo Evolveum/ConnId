@@ -26,6 +26,7 @@ package org.identityconnectors.framework.impl.serializer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.identityconnectors.framework.api.operations.AuthenticationApiOp;
 import org.identityconnectors.framework.api.operations.CreateApiOp;
 import org.identityconnectors.framework.api.operations.DeleteApiOp;
@@ -42,6 +43,7 @@ import org.identityconnectors.framework.api.operations.TestApiOp;
 import org.identityconnectors.framework.api.operations.UpdateApiOp;
 import org.identityconnectors.framework.api.operations.UpdateDeltaApiOp;
 import org.identityconnectors.framework.api.operations.ValidateApiOp;
+import org.identityconnectors.framework.api.operations.PartialSchemaApiOp;
 
 class OperationMappings {
 
@@ -64,5 +66,6 @@ class OperationMappings {
         MAPPINGS.add(new ObjectTypeMapperImpl(SyncApiOp.class, "SyncApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(LiveSyncApiOp.class, "LiveSyncApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(DiscoverConfigurationApiOp.class, "DiscoverConfigurationApiOp"));
+        MAPPINGS.add(new ObjectTypeMapperImpl(PartialSchemaApiOp.class, "PartialSchemaApiOp"));
     }
 }
