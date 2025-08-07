@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2014 ForgeRock AS.
+ * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.common.objects;
 
@@ -27,26 +28,29 @@ package org.identityconnectors.framework.common.objects;
  * Builder for {@link SyncDelta}.
  */
 public final class SyncDeltaBuilder {
+
     private SyncToken syncToken;
+
     private SyncDeltaType deltaType;
+
     private Uid previousUid;
+
     private ObjectClass objectClass;
+
     private Uid uid;
+
     private ConnectorObject connectorObject;
 
     /**
      * Create a new <code>SyncDeltaBuilder</code>
      */
     public SyncDeltaBuilder() {
-
     }
 
     /**
-     * Creates a new <code>SyncDeltaBuilder</code> whose values are initialized
-     * to those of the delta.
+     * Creates a new <code>SyncDeltaBuilder</code> whose values are initialized to those of the delta.
      *
-     * @param delta
-     *            The original delta.
+     * @param delta the original delta.
      */
     public SyncDeltaBuilder(SyncDelta delta) {
         syncToken = delta.getToken();
@@ -69,8 +73,7 @@ public final class SyncDeltaBuilder {
     /**
      * Sets the <code>SyncToken</code> of the object that changed.
      *
-     * @param token
-     *            the <code>SyncToken</code> of the object that changed.
+     * @param token the <code>SyncToken</code> of the object that changed.
      */
     public SyncDeltaBuilder setToken(SyncToken token) {
         syncToken = token;
@@ -89,8 +92,7 @@ public final class SyncDeltaBuilder {
     /**
      * Sets the type of the change that occurred.
      *
-     * @param type
-     *            The type of change that occurred.
+     * @param type The type of change that occurred.
      */
     public SyncDeltaBuilder setDeltaType(SyncDeltaType type) {
         deltaType = type;
@@ -109,8 +111,7 @@ public final class SyncDeltaBuilder {
     /**
      * Sets the Uid of the object before the change.
      *
-     * @param previousUid
-     *            The Uid of the object before the change.
+     * @param previousUid The Uid of the object before the change.
      */
     public SyncDeltaBuilder setPreviousUid(Uid previousUid) {
         this.previousUid = previousUid;
@@ -130,8 +131,7 @@ public final class SyncDeltaBuilder {
      * Sets the ObjectClass of the object that deleted. Note that this is
      * implicitly set when you call {@link #setObject(ConnectorObject)}.
      *
-     * @param objectClass
-     *            The ObjectClass of the object that changed.
+     * @param objectClass The ObjectClass of the object that changed.
      */
     public SyncDeltaBuilder setObjectClass(ObjectClass objectClass) {
         this.objectClass = objectClass;
@@ -151,8 +151,7 @@ public final class SyncDeltaBuilder {
      * Sets the Uid of the object that changed. Note that this is implicitly set
      * when you call {@link #setObject(ConnectorObject)}.
      *
-     * @param uid
-     *            The Uid of the object that changed.
+     * @param uid The Uid of the object that changed.
      */
     public SyncDeltaBuilder setUid(Uid uid) {
         this.uid = uid;
@@ -169,11 +168,9 @@ public final class SyncDeltaBuilder {
     }
 
     /**
-     * Sets the object that changed and implicitly sets Uid if object is not
-     * null.
+     * Sets the object that changed and implicitly sets Uid if object is not null.
      *
-     * @param object
-     *            The object that changed. May be null for deletes.
+     * @param object The object that changed. May be null for deletes.
      */
     public SyncDeltaBuilder setObject(ConnectorObject object) {
         connectorObject = object;

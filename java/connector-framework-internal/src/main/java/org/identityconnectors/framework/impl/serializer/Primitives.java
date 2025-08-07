@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
-
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.security.EncryptorFactory;
 import org.identityconnectors.common.security.GuardedByteArray;
@@ -50,10 +50,9 @@ import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
 class Primitives {
 
-    public static final List<ObjectTypeMapper> HANDLERS = new ArrayList<ObjectTypeMapper>();
+    public static final List<ObjectTypeMapper> HANDLERS = new ArrayList<>();
 
     static {
-
         HANDLERS.add(new AbstractObjectSerializationHandler(Boolean.class, "Boolean") {
 
             @Override
@@ -262,7 +261,7 @@ class Primitives {
             @Override
             public Object deserialize(final ObjectDecoder decoder) {
                 final String val = decoder.readStringContents();
-                return new File(val);
+                return Path.of(val).toFile();
             }
 
             @Override
@@ -376,10 +375,9 @@ class Primitives {
             @Override
             public void serialize(final Object object, final ObjectEncoder encoder) {
                 final ZonedDateTime val = (ZonedDateTime) object;
-                // Make sure we have timezone as (numeric) offset instead of 
-                // using zone ID. We do this by invoking toOffsetDateTime().
-                // This makes the timestamp ISO-8601 compatible and therefore
-                // more portable.
+                // Make sure we have timezone as (numeric) offset instead of using zone ID. We do this by invoking
+                // toOffsetDateTime().
+                // This makes the timestamp ISO-8601 compatible and therefore more portable.
                 encoder.writeStringContents(val.toOffsetDateTime().toString());
             }
         });
@@ -441,14 +439,11 @@ class Primitives {
                 // special case - for case insensitive maps
                 if (CollectionUtil.isCaseInsensitiveMap(map)) {
                     encoder.writeBooleanField("caseInsensitive", true);
-                } // for all other sorted maps, we don't know how
-                // to serialize them
+                } // for all other sorted maps, we don't know how to serialize them
                 else if (map instanceof SortedMap) {
                     throw new IllegalArgumentException("Serialization of SortedMap not supported");
                 }
-                map.forEach((key, value) -> {
-                    encoder.writeObjectContents(new MapEntry(key, value));
-                });
+                map.forEach((key, value) -> encoder.writeObjectContents(new MapEntry(key, value)));
             }
 
             @Override
@@ -513,9 +508,7 @@ class Primitives {
                 else if (set instanceof SortedSet) {
                     throw new IllegalArgumentException("Serialization of SortedSet not supported");
                 }
-                set.forEach((obj) -> {
-                    encoder.writeObjectContents(obj);
-                });
+                set.forEach((obj) -> encoder.writeObjectContents(obj));
             }
 
             @Override

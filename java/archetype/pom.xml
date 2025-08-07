@@ -30,7 +30,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version>1.6.0.0-SNAPSHOT</version>
+    <version>1.6.1.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>connector-archetype</artifactId>
@@ -38,7 +38,7 @@
   <packaging>maven-archetype</packaging>
 
   <properties>
-    <maven.archetype.version>3.3.0</maven.archetype.version>
+    <maven.archetype.version>3.4.0</maven.archetype.version>
 
     <parent.path>${basedir}/..</parent.path>
   </properties>

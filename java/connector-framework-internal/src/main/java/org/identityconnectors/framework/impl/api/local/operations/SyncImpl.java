@@ -21,9 +21,11 @@
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
  * Portions Copyrighted 2014-2018 Evolveum
+ * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import org.identityconnectors.common.Assertions;
 import org.identityconnectors.common.logging.Log;
@@ -66,9 +68,9 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
             options = new OperationOptionsBuilder().build();
         }
 
-        ResultsHandlerConfiguration hdlCfg =
-                null != getOperationalContext() ? getOperationalContext()
-                                .getResultsHandlerConfiguration() : new ResultsHandlerConfiguration();
+        ResultsHandlerConfiguration hdlCfg = null != getOperationalContext()
+                ? getOperationalContext().getResultsHandlerConfiguration()
+                : new ResultsHandlerConfiguration();
 
         // add a handler in the chain to remove attributes
         String[] attrsToGet = options.getAttributesToGet();
@@ -77,8 +79,7 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
         }
         // chain a normalizing results handler
         if (getConnector() instanceof AttributeNormalizer && hdlCfg.isEnableNormalizingResultsHandler()) {
-            handler =
-                    new NormalizingSyncResultsHandler(handler, getNormalizer(objectClass));
+            handler = new NormalizingSyncResultsHandler(handler, getNormalizer(objectClass));
         }
 
         final SyncResultsHandler handlerChain = handler;
@@ -148,15 +149,14 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
     }
 
     /**
-     * Simple handler to reduce the attributes to only the set of attribute to
-     * get.
+     * Simple handler to reduce the attributes to only the set of attribute to get.
      */
     public static class AttributesToGetSyncResultsHandler
             extends AttributesToGetResultsHandler implements SyncResultsHandler {
 
         private final SyncResultsHandler handler;
 
-        public AttributesToGetSyncResultsHandler(final SyncResultsHandler handler, String[] attrsToGet) {
+        public AttributesToGetSyncResultsHandler(final SyncResultsHandler handler, final String[] attrsToGet) {
             super(attrsToGet);
             this.handler = handler;
         }
@@ -164,9 +164,7 @@ public class SyncImpl extends ConnectorAPIOperationRunner implements SyncApiOp {
         @Override
         public boolean handle(final SyncDelta delta) {
             SyncDeltaBuilder bld = new SyncDeltaBuilder(delta);
-            if (delta.getObject() != null) {
-                bld.setObject(reduceToAttrsToGet(delta.getObject()));
-            }
+            Optional.ofNullable(delta.getObject()).ifPresent(obj -> bld.setObject(reduceToAttrsToGet(obj)));
             return handler.handle(bld.build());
         }
     }

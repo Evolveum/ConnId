@@ -20,13 +20,13 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2014 ForgeRock AS.
+ * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.impl.api.local;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.identityconnectors.framework.api.operations.*;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.impl.api.APIConfigurationImpl;
@@ -38,7 +38,6 @@ import org.identityconnectors.framework.spi.operations.PartialSchemaOp;
 
 /**
  * Implements all the methods of the facade.
- * <p>
  */
 public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
 
@@ -48,11 +47,14 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
     /**
      * Map the API interfaces to their implementation counterparts.
      */
-    private static final Map<Class<? extends APIOperation>, Constructor<? extends ConnectorAPIOperationRunner>> API_TO_IMPL =
-            new HashMap<Class<? extends APIOperation>, Constructor<? extends ConnectorAPIOperationRunner>>();
+    private static final Map<
+            Class<? extends APIOperation>, Constructor<? extends ConnectorAPIOperationRunner>> API_TO_IMPL =
+            new HashMap<>();
 
-    private static void addImplementation(final Class<? extends APIOperation> inter,
+    private static void addImplementation(
+            final Class<? extends APIOperation> inter,
             final Class<? extends ConnectorAPIOperationRunner> impl) {
+
         Constructor<? extends ConnectorAPIOperationRunner> constructor;
         try {
             constructor = impl.getConstructor(ConnectorOperationalContext.class, Connector.class);
@@ -76,6 +78,7 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
         addImplementation(ScriptOnConnectorApiOp.class, ScriptOnConnectorImpl.class);
         addImplementation(ScriptOnResourceApiOp.class, ScriptOnResourceImpl.class);
         addImplementation(SyncApiOp.class, SyncImpl.class);
+        addImplementation(LiveSyncApiOp.class, LiveSyncImpl.class);
         addImplementation(DiscoverConfigurationApiOp.class, DiscoverConfigurationImpl.class);
         addImplementation(PartialSchemaApiOp.class, PartialSchemaImpl.class);
     }
@@ -83,7 +86,6 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
     // =======================================================================
     // Fields
     // =======================================================================
-
     /**
      * The connector info
      */
@@ -97,28 +99,26 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
     /**
      * Builds up the maps of supported operations and calls.
      */
-    public LocalConnectorFacadeImpl(final LocalConnectorInfoImpl connectorInfo,
+    public LocalConnectorFacadeImpl(
+            final LocalConnectorInfoImpl connectorInfo,
             final APIConfigurationImpl apiConfiguration) {
+
         super(apiConfiguration);
         this.connectorInfo = connectorInfo;
-        if (connectorInfo.isConfigurationStateless()
-                && !connectorInfo.isConnectorPoolingSupported()) {
+        if (connectorInfo.isConfigurationStateless() && !connectorInfo.isConnectorPoolingSupported()) {
             operationalContext = null;
         } else {
-            operationalContext =
-                    new ConnectorOperationalContext(connectorInfo, getAPIConfiguration());
+            operationalContext = new ConnectorOperationalContext(connectorInfo, getAPIConfiguration());
         }
     }
 
     public LocalConnectorFacadeImpl(final LocalConnectorInfoImpl connectorInfo, String configuration) {
         super(configuration, connectorInfo);
         this.connectorInfo = connectorInfo;
-        if (connectorInfo.isConfigurationStateless()
-                && !connectorInfo.isConnectorPoolingSupported()) {
+        if (connectorInfo.isConfigurationStateless() && !connectorInfo.isConnectorPoolingSupported()) {
             operationalContext = null;
         } else {
-            operationalContext =
-                    new ConnectorOperationalContext(connectorInfo, getAPIConfiguration());
+            operationalContext = new ConnectorOperationalContext(connectorInfo, getAPIConfiguration());
         }
     }
 
@@ -139,22 +139,16 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
     // =======================================================================
     // ConnectorFacade Interface
     // =======================================================================
-
     @Override
     protected APIOperation getOperationImplementation(final Class<? extends APIOperation> api) {
-
         APIOperation proxy;
-        // first create the inner proxy - this is the proxy that obtaining
-        // a connector from the pool, etc
-        // NOTE: we want to skip this part of the proxy for
-        // validate op, but we will want the timeout proxy
+        // first create the inner proxy - this is the proxy that obtaining a connector from the pool, etc
+        // NOTE: we want to skip this part of the proxy for validate op, but we will want the timeout proxy
         if (api == ValidateApiOp.class) {
-            final OperationalContext context =
-                    new OperationalContext(connectorInfo, getAPIConfiguration());
+            final OperationalContext context = new OperationalContext(connectorInfo, getAPIConfiguration());
             proxy = new ValidateImpl(context);
         } else if (api == GetApiOp.class) {
-            final Constructor<? extends APIOperationRunner> constructor =
-                    API_TO_IMPL.get(SearchApiOp.class);
+            final Constructor<? extends APIOperationRunner> constructor = API_TO_IMPL.get(SearchApiOp.class);
             final ConnectorAPIOperationRunnerProxy handler =
                     new ConnectorAPIOperationRunnerProxy(getOperationalContext(), constructor);
             proxy = new GetImpl((SearchApiOp) newAPIOperationProxy(SearchApiOp.class, handler));
@@ -166,9 +160,8 @@ public class LocalConnectorFacadeImpl extends AbstractConnectorFacade {
         }
 
         // now proxy to setup the thread-local classloader
-        proxy =
-                newAPIOperationProxy(api, new ThreadClassLoaderManagerProxy(connectorInfo
-                        .getConnectorClass().getClassLoader(), proxy));
+        proxy = newAPIOperationProxy(api, new ThreadClassLoaderManagerProxy(
+                connectorInfo.getConnectorClass().getClassLoader(), proxy));
 
         // now wrap the proxy in the appropriate timeout proxy
         proxy = createTimeoutProxy(api, proxy);

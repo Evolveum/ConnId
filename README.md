@@ -87,25 +87,18 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://github.com/Tirasa/ConnIdDBBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdDBBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
  </tr>
  <tr>
-  <td>Flat File</td>
-  <td>https://github.com/Tirasa/ConnIdFlatFileBundle</td>
-  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Flat+File">wiki</a></td>
-  <td><a href="https://connid.atlassian.net/browse/FLATFILE">issues</a></td>
-  <td><a href="https://travis-ci.org/Tirasa/ConnIdFlatFileBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdFlatFileBundle.png"/></a></td>
- </tr>
- <tr>
-  <td>FreeIPA</td>
-  <td>https://github.com/Tirasa/ConnIdFreeIPABundle</td>
-  <td><a href="https://connid.atlassian.net/wiki/display/BASE/FreeIPA">wiki</a></td>
-  <td><a href="https://connid.atlassian.net/browse/FREEIPA">issues</a></td>
-  <td><a href="https://travis-ci.org/Tirasa/ConnIdFreeIPABundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdFreeIPABundle.png"/></a></td>
- </tr>
- <tr>
   <td>Google Apps</td>
   <td>https://github.com/Tirasa/ConnIdGoogleAppsBundle</td>
   <td><a href="https://connid.atlassian.net/wiki/display/BASE/Google+Apps">wiki</a></td>
   <td><a href="https://connid.atlassian.net/browse/GOOGLEAPPS">issues</a></td>
   <td><a href="https://github.com/Tirasa/ConnIdGoogleAppsBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdGoogleAppsBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
+ </tr>
+ <tr>
+  <td>Kafka</td>
+  <td>https://github.com/Tirasa/ConnIdKafkaBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Kafka">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/KAFKA">issues</a></td>
+  <td><a href="https://github.com/Tirasa/ConnIdKafkaBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdKafkaBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
  </tr>
  <tr>
   <td>LDAP</td>
@@ -115,18 +108,18 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://github.com/Tirasa/ConnIdLDAPBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdLDAPBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
  </tr>
  <tr>
+  <td>LdUp</td>
+  <td>https://github.com/Tirasa/ConnIdLdUpBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/LDUP">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/LdUP">issues</a></td>
+  <td><a href="https://github.com/Tirasa/ConnIdLdUpBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdLdUpBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
+ </tr>
+ <tr>
   <td>Okta</td>
   <td>https://github.com/Tirasa/ConnIdOktaBundle</td>
   <td><a href="https://connid.atlassian.net/wiki/display/BASE/Okta">wiki</a></td>
   <td><a href="https://connid.atlassian.net/browse/OKTA">issues</a></td>
  <td><a href="https://github.com/Tirasa/ConnIdOktaBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdOktaBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
- </tr>
- <tr>
-  <td>OpenAM</td>
-  <td>https://github.com/Tirasa/ConnIdOpenAMBundle</td>
-  <td><a href="https://connid.atlassian.net/wiki/display/BASE/OpenAM">wiki</a></td>
-  <td><a href="https://connid.atlassian.net/browse/OPENAM">issues</a></td>
-  <td><a href="https://travis-ci.org/Tirasa/ConnIdOpenAMBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdOpenAMBundle.png"/></a></td>
  </tr>
 <tr>
   <td>REST</td>
@@ -157,19 +150,51 @@ Download instructions at [this page](https://connid.atlassian.net/wiki/display/B
   <td><a href="https://github.com/Tirasa/ConnIdSOAPBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdSOAPBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
  </tr>
  <tr>
-  <td>UNIX</td>
-  <td>https://github.com/Tirasa/ConnIdUNIXBundle</td>
-  <td><a href="https://connid.atlassian.net/wiki/display/BASE/UNIX">wiki</a></td>
-  <td><a href="https://connid.atlassian.net/browse/UNIX">issues</a></td>
-  <td><a href="https://travis-ci.org/Tirasa/ConnIdUNIXBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdUNIXBundle.png"/></a></td>
-  </tr>
- <tr>
   <td>Zimbra</td>
   <td>https://github.com/Tirasa/ConnIdZimbraBundle</td>
   <td><a href="https://connid.atlassian.net/wiki/display/BASE/Zimbra">wiki</a></td>
   <td><a href="https://connid.atlassian.net/browse/Zimbra">issues</a></td>
   <td><a href="https://github.com/Tirasa/ConnIdZimbraBundle/actions/workflows/ci.yml"><img src="https://github.com/Tirasa/ConnIdZimbraBundle/actions/workflows/ci.yml/badge.svg"/></a></td>
  </tr>
+ </tbody>
+</table>
+
+### Archived
+
+<table>
+<thead>
+ <tr>
+   <th>Name</th>
+   <th>Source</th>
+   <th>Wiki</th>
+   <th>Issues</th>
+ </tr>
+</thead>
+<tbody>
+ <tr>
+  <td>Flat File</td>
+  <td>https://github.com/Tirasa/ConnIdFlatFileBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/Flat+File">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/FLATFILE">issues</a></td>
+ </tr>
+ <tr>
+  <td>FreeIPA</td>
+  <td>https://github.com/Tirasa/ConnIdFreeIPABundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/FreeIPA">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/FREEIPA">issues</a></td>
+ </tr>
+ <tr>
+  <td>OpenAM</td>
+  <td>https://github.com/Tirasa/ConnIdOpenAMBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/OpenAM">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/OPENAM">issues</a></td>
+ </tr>
+ <tr>
+  <td>UNIX</td>
+  <td>https://github.com/Tirasa/ConnIdUNIXBundle</td>
+  <td><a href="https://connid.atlassian.net/wiki/display/BASE/UNIX">wiki</a></td>
+  <td><a href="https://connid.atlassian.net/browse/UNIX">issues</a></td>
+  </tr>
  </tbody>
 </table>
 

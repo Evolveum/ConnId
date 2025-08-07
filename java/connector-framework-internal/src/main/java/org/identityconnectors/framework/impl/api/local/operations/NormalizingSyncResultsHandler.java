@@ -20,22 +20,24 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2014 ForgeRock AS.
+ * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
 import org.identityconnectors.common.Assertions;
 import org.identityconnectors.framework.common.objects.SyncDelta;
 import org.identityconnectors.framework.common.objects.SyncResultsHandler;
-import org.identityconnectors.framework.common.objects.SyncToken;
-import org.identityconnectors.framework.spi.SyncTokenResultsHandler;
 
 public class NormalizingSyncResultsHandler implements SyncResultsHandler {
 
     private final SyncResultsHandler target;
+
     private final ObjectNormalizerFacade normalizer;
 
-    public NormalizingSyncResultsHandler(SyncResultsHandler target,
-            ObjectNormalizerFacade normalizer) {
+    public NormalizingSyncResultsHandler(
+            final SyncResultsHandler target,
+            final ObjectNormalizerFacade normalizer) {
+
         Assertions.nullCheck(target, "target");
         Assertions.nullCheck(normalizer, "normalizer");
         this.target = target;
@@ -43,7 +45,7 @@ public class NormalizingSyncResultsHandler implements SyncResultsHandler {
     }
 
     @Override
-    public boolean handle(SyncDelta delta) {
+    public boolean handle(final SyncDelta delta) {
         SyncDelta normalized = normalizer.normalizeSyncDelta(delta);
         return target.handle(normalized);
     }

@@ -36,8 +36,10 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,8 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
-
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.pooling.ObjectPoolConfiguration;
 import org.identityconnectors.common.script.Script;
@@ -242,7 +242,7 @@ public class ObjectSerializationTests {
 
     @Test
     public void testFile() throws Exception {
-        File v1 = new File("c:/foo.txt");
+        File v1 = Path.of("c:/foo.txt").toFile();
         File v2 = (File) cloneObject(v1);
         assertTrue(v1 != v2);
         assertEquals(v1, v2);
@@ -1073,6 +1073,28 @@ public class ObjectSerializationTests {
         assertEquals(new Uid("foo"), v2.getUid());
         assertEquals(new SyncToken("mytoken"), v2.getToken());
         assertEquals(SyncDeltaType.DELETE, v2.getDeltaType());
+        assertEquals(v1, v2);
+    }
+
+    @Test
+    public void testLiveSyncDelta() {
+        ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
+        bld.setUid("foo");
+        bld.setName("name");
+        LiveSyncDeltaBuilder builder = new LiveSyncDeltaBuilder();
+        builder.setObject(bld.build());
+        LiveSyncDelta v1 = builder.build();
+        LiveSyncDelta v2 = (LiveSyncDelta) cloneObject(v1);
+        assertEquals(new Uid("foo"), v2.getObject().getUid());
+        assertEquals(v1, v2);
+
+        builder = new LiveSyncDeltaBuilder();
+        builder.setObjectClass(ObjectClass.ACCOUNT);
+        builder.setUid(new Uid("foo"));
+        v1 = builder.build();
+        v2 = (LiveSyncDelta) cloneObject(v1);
+        assertEquals(ObjectClass.ACCOUNT, v2.getObjectClass());
+        assertEquals(new Uid("foo"), v2.getUid());
         assertEquals(v1, v2);
     }
 

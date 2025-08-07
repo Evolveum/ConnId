@@ -28,17 +28,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>ConnId</name>
+  <description>ConnId parent POM</description>
+
   <groupId>net.tirasa.connid</groupId>
   <artifactId>connid</artifactId>
-  <version>1.6.0.0-SNAPSHOT</version>
+  <version>1.6.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-
-  <!-- maven repository on sonatype -->
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>9</version>
-  </parent>
 
   <url>http://connid.tirasa.net/</url>
 
@@ -56,6 +51,30 @@
     <developerConnection>scm:git:git@github.com:Tirasa/ConnId.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>central-portal-snapshots</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>central-portal</id>
+      <url>https://central.sonatype.com</url>
+    </repository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>central-portal-snapshots</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <issueManagement>
     <system>jira</system>
@@ -79,16 +98,69 @@
       <archive>http://groups.google.com/group/connid-users</archive>
     </mailingList>
   </mailingLists>
-    
+
+  <developers>
+    <developer>
+      <id>ilgrosso</id>
+      <email>ilgrosso@apache.org</email>
+      <name>Francesco Chicchiriccò</name>
+      <organization>Tirasa</organization>
+    </developer>
+    <developer>
+      <id>fmartelli</id>
+      <name>Fabio Martelli</name>
+      <organization>Tirasa</organization>
+    </developer>
+    <developer>
+      <id>mdisabatino</id>
+      <name>Marco Di Sabatino Di Diodoro</name>
+      <organization>Tirasa</organization>
+    </developer>
+    <developer>
+      <id>massi</id>
+      <name>Massimiliano Perrone</name>
+      <organization>Tirasa</organization>
+    </developer>
+    <developer>
+      <id>massi</id>
+      <name>Massimiliano Perrone</name>
+      <organization>Tirasa</organization>
+    </developer>
+    <developer>
+      <id>semancik</id>
+      <name>Radovan Semancik</name>
+      <organization>Evolveum</organization>
+    </developer>
+    <developer>
+      <id>semancik</id>
+      <name>Radovan Semancik</name>
+      <organization>Evolveum</organization>
+    </developer>
+    <developer>
+      <id>mederly</id>
+      <organization>Evolveum</organization>
+    </developer>
+    <developer>
+      <id>matusmacik</id>
+      <name>Matus Macik</name>
+      <organization>Evolveum</organization>
+    </developer>
+    <developer>
+      <id>virgo47</id>
+      <name>Richard "Virgo" Richter</name>
+      <organization>Evolveum</organization>
+    </developer>
+  </developers>
+
   <properties>
     <parent.path>${basedir}</parent.path>
 
-    <groovy.version>4.0.23</groovy.version>
+    <groovy.version>4.0.27</groovy.version>
 
-    <logback.version>1.5.9</logback.version>
-    <slf4j.version>2.0.16</slf4j.version>
+    <logback.version>1.5.18</logback.version>
+    <slf4j.version>2.0.17</slf4j.version>
 
-    <junit.version>5.11.2</junit.version>
+    <junit.version>5.13.3</junit.version>
 
     <targetJdk>11</targetJdk>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -146,7 +218,7 @@
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
         <artifactId>pax-swissbox-extender</artifactId>
-        <version>1.8.5</version>
+        <version>1.9.0</version>
       </dependency>
       <dependency>
         <groupId>org.osgi</groupId>
@@ -177,7 +249,7 @@
       <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
-        <version>1.3.4</version>
+        <version>1.3.5</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -209,7 +281,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.13.0</version>
+          <version>3.14.0</version>
           <configuration>
             <release>${targetJdk}</release>
             <useIncrementalCompilation>false</useIncrementalCompilation>
@@ -234,7 +306,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>3.5.3</version>
           <configuration>
             <includes>
               <include>**/*Tests.java</include>
@@ -266,7 +338,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.9.1</version>
         </plugin>
 
         <plugin>
@@ -287,9 +359,20 @@
             </supportedProjectTypes>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>3.1.1</version>
+          <configuration>
+            <mavenExecutorId>forked-path</mavenExecutorId>
+            <useReleaseProfile>false</useReleaseProfile>
+            <arguments>${arguments} -Pcentral-portal-release</arguments>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -318,7 +401,7 @@
       <plugin>
         <groupId>org.gaul</groupId>
         <artifactId>modernizer-maven-plugin</artifactId>
-        <version>2.9.0</version>
+        <version>3.1.0</version>
         <configuration>
           <javaVersion>${targetJdk}</javaVersion>
           <exclusions>
@@ -336,7 +419,7 @@
           </execution>
         </executions>
       </plugin>
-    
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -351,13 +434,7 @@
               <outputDirectory>${project.build.directory}/reports/apidocs/META-INF</outputDirectory>
               <resources>
                 <resource>
-                  <directory>..</directory>
-                  <includes>
-                    <include>LICENSE</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <directory>../..</directory>
+                  <directory>${parent.path}/..</directory>
                   <includes>
                     <include>LICENSE</include>
                   </includes>
@@ -367,7 +444,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>ianal-maven-plugin</artifactId>
@@ -393,59 +470,64 @@
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>4.6</version>
+        <version>5.0.0</version>
         <configuration>
-          <header>${parent.path}/src/main/resources/header.txt</header>
           <strictCheck>true</strictCheck>
           <failIfMissing>true</failIfMissing>
           <aggregate>true</aggregate>
           <useDefaultExcludes>true</useDefaultExcludes>
           <useDefaultMapping>true</useDefaultMapping>
-          <headerSections>
-            <headerSection>
-              <key>COPYRIGHT_SECTION</key>
-              <defaultValue>Copyright 2015 ConnId. All rights reserved.</defaultValue>
-              <ensureMatch>Copyright .*\. All rights reserved\.</ensureMatch>
-            </headerSection>
-            <headerSection>
-              <key>PORTIONS_COPYRIGHT_SECTION</key>
-              <defaultValue />
-              <ensureMatch>(.*^Portions Copyrighted .*)?</ensureMatch>
-            </headerSection>
-          </headerSections>
-          <headerDefinitions>
-            <headerDefinition>${parent.path}/src/main/resources/java-single-star.xml</headerDefinition>
-          </headerDefinitions>
           <mapping>
             <md>XML_STYLE</md>
             <java>JAVA-SINGLE-STAR</java>
             <groovy>JAVA-SINGLE-STAR</groovy>
+            <service>SCRIPT_STYLE</service>
           </mapping>
-          <excludes>
-            <exclude>**/LICENSE*</exclude>
-            <exclude>**/NOTICE*</exclude>
-            <exclude>**/*.pfx</exclude>
-            <exclude>**/*.dll</exclude>
-            <exclude>**/*.so</exclude>
-            <exclude>**/*.jnilib</exclude>
-            <exclude>nbactions.xml</exclude>
-            <exclude>nb-configuration.xml</exclude>
-            <exclude>**/META-INF/services/**</exclude>
-            <exclude>**/*.css</exclude>
-            <exclude>**/*.js</exclude>
-            <exclude>**/*.csv</exclude>
-            <exclude>**/maven-eclipse.xml</exclude>
-            <exclude>**/*.iml</exclude>
-            <exclude>**/*.log</exclude>
-            <exclude>.externalToolBuilders/**</exclude>
-            <exclude>.git/**</exclude>
-            <exclude>**/.idea/**</exclude>
-            <exclude>**/.*</exclude>
-            <exclude>build-number.txt</exclude>
-            <exclude>**/cov-int/**</exclude>
-            <exclude>**/archetype-resources/**</exclude>
-            <exclude>**/goal.txt</exclude>
-          </excludes>
+          <licenseSets>
+            <licenseSet>
+              <header>${parent.path}/src/main/resources/header.txt</header>
+              <headerSections>
+                <headerSection>
+                  <key>COPYRIGHT_SECTION</key>
+                  <defaultValue>Copyright 2015 ConnId. All rights reserved.</defaultValue>
+                  <ensureMatch>Copyright .*\. All rights reserved\.</ensureMatch>
+                </headerSection>
+                <headerSection>
+                  <key>PORTIONS_COPYRIGHT_SECTION</key>
+                  <defaultValue />
+                  <ensureMatch>(.*^Portions Copyrighted .*)?</ensureMatch>
+                </headerSection>
+              </headerSections>
+              <headerDefinitions>
+                <headerDefinition>${parent.path}/src/main/resources/java-single-star.xml</headerDefinition>
+              </headerDefinitions>
+              <excludes>
+                <exclude>**/LICENSE*</exclude>
+                <exclude>**/NOTICE*</exclude>
+                <exclude>**/*.pfx</exclude>
+                <exclude>**/*.dll</exclude>
+                <exclude>**/*.so</exclude>
+                <exclude>**/*.jnilib</exclude>
+                <exclude>nbactions.xml</exclude>
+                <exclude>nb-configuration.xml</exclude>
+                <exclude>**/META-INF/services/**</exclude>
+                <exclude>**/*.css</exclude>
+                <exclude>**/*.js</exclude>
+                <exclude>**/*.csv</exclude>
+                <exclude>**/maven-eclipse.xml</exclude>
+                <exclude>**/*.iml</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>.externalToolBuilders/**</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>**/.idea/**</exclude>
+                <exclude>**/.*</exclude>
+                <exclude>build-number.txt</exclude>
+                <exclude>**/cov-int/**</exclude>
+                <exclude>**/archetype-resources/**</exclude>
+                <exclude>**/goal.txt</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
         </configuration>
         <executions>
           <execution>
@@ -460,7 +542,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.11.2</version>
         <configuration>
           <doclint>none</doclint>
           <release>${targetJdk}</release>
@@ -469,6 +551,11 @@
             <additionalOption>none</additionalOption>
           </additionalOptions>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -484,15 +571,35 @@
 
   <profiles>
     <profile>
-      <id>release-sign-artifacts</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
+      <id>central-portal-release</id>
+
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -507,11 +614,21 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.8.0</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central-portal</publishingServerId>
+              <waitUntil>uploaded</waitUntil>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
-    
+
   <modules>
     <module>connector-framework</module>
     <module>connector-test-common</module>
@@ -523,6 +640,7 @@
     <module>connector-framework-osgi</module>
     <module>connector-framework-contract</module>
     <module>slf4j-logging</module>
+    <module>commons</module>
     <module>connector-server-zip</module>
     <module>archetype</module>
   </modules>

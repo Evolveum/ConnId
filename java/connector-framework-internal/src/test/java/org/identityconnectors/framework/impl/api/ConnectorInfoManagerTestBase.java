@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 
 import org.identityconnectors.common.CollectionUtil;
@@ -49,6 +50,7 @@ import org.identityconnectors.framework.api.ConnectorInfoManager;
 import org.identityconnectors.framework.api.ConnectorKey;
 import org.identityconnectors.framework.api.operations.APIOperation;
 import org.identityconnectors.framework.api.operations.CreateApiOp;
+import org.identityconnectors.framework.api.operations.LiveSyncApiOp;
 import org.identityconnectors.framework.api.operations.SearchApiOp;
 import org.identityconnectors.framework.api.operations.SyncApiOp;
 import org.identityconnectors.framework.common.FrameworkUtilTestHelpers;
@@ -184,8 +186,9 @@ public abstract class ConnectorInfoManagerTestBase {
         assertNotNull(property);
 
         Set<Class<? extends APIOperation>> operations = property.getOperations();
-        assertEquals(1, operations.size());
-        assertEquals(SyncApiOp.class, operations.iterator().next());
+        assertEquals(2, operations.size());
+        assertTrue(operations.contains(SyncApiOp.class));
+        assertTrue(operations.contains(LiveSyncApiOp.class));
 
         CurrentLocale.clear();
         assertEquals("Help for test field.", property.getHelpMessage(null));
@@ -353,7 +356,6 @@ public abstract class ConnectorInfoManagerTestBase {
 
         ObjectClassInfo userObjectClass = schema.findObjectClassInfo(TstConnector.USER_CLASS_NAME);
         assertNotNull(userObjectClass);
-        assertNotNull(userObjectClass.getDescription());
         userObjectClass.getAttributeInfo().stream()
                 .filter(attr -> attr.getName().equals(TstConnector.MEMBER_OF_ATTR_NAME))
                 .findFirst()
@@ -585,7 +587,7 @@ public abstract class ConnectorInfoManagerTestBase {
             APIConfiguration config = info1.createDefaultAPIConfiguration();
             config.getConfigurationProperties().getProperty("resetConnectionCount").setValue(true);
             ConnectorFacade facade1 = ConnectorFacadeFactory.getInstance().newInstance(config);
-            facade1.schema(); //force instantiation            
+            facade1.schema(); //force instantiation
         }
 
         APIConfiguration config = info1.createDefaultAPIConfiguration();
@@ -712,9 +714,9 @@ public abstract class ConnectorInfoManagerTestBase {
         assertEquals(TstConnector.GROUP_CLASS_DESCRIPTION, groupObjectClass.getDescription());
     }
 
-    final File getTestBundlesDir() throws URISyntaxException {
+    static File getTestBundlesDir() throws URISyntaxException {
         URL testOutputDirectory = ConnectorInfoManagerTestBase.class.getResource("/");
-        File testBundlesDir = new File(testOutputDirectory.toURI());
+        File testBundlesDir = Path.of(testOutputDirectory.toURI()).toFile();
         if (!testBundlesDir.isDirectory()) {
             throw new ConnectorException(testBundlesDir.getPath() + " does not exist");
         }

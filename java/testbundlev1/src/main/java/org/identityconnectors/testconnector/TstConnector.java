@@ -20,6 +20,7 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
+ * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.testconnector;
 
@@ -41,7 +42,7 @@ import org.identityconnectors.testcommon.TstCommon;
         displayNameKey = "TestConnector",
         categoryKey = "TestConnector.category",
         configurationClass = TstConnectorConfig.class)
-public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, SearchOp<String>, SyncOp, PartialSchemaOp {
+public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, SearchOp<String>, SyncOp, PartialSchemaOp, LiveSyncOp {
 
     public static final String USER_CLASS_NAME = "user";
 
@@ -263,14 +264,12 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
         checkClassLoader();
         int remaining = _config.getNumResults();
         for (int i = 0; i < _config.getNumResults(); i++) {
-            ConnectorObjectBuilder obuilder =
-                    new ConnectorObjectBuilder();
+            ConnectorObjectBuilder obuilder = new ConnectorObjectBuilder();
             obuilder.setUid(Integer.toString(i));
             obuilder.setName(Integer.toString(i));
             obuilder.setObjectClass(objectClass);
 
-            SyncDeltaBuilder builder =
-                    new SyncDeltaBuilder();
+            SyncDeltaBuilder builder = new SyncDeltaBuilder();
             builder.setObject(obuilder.build());
             builder.setDeltaType(SyncDeltaType.CREATE_OR_UPDATE);
             builder.setToken(new SyncToken("mytoken"));
@@ -290,6 +289,23 @@ public class TstConnector implements CreateOp, PoolableConnector, SchemaOp, Sear
     public SyncToken getLatestSyncToken(ObjectClass objectClass) {
         checkClassLoader();
         return new SyncToken("mylatest");
+    }
+
+    @Override
+    public void livesync(
+            ObjectClass objectClass,
+            LiveSyncResultsHandler handler,
+            OperationOptions options) {
+
+        checkClassLoader();
+
+        handler.handle(new LiveSyncDeltaBuilder().
+                setObject(new ConnectorObjectBuilder().
+                        setUid(UUID.randomUUID().toString()).
+                        setName(UUID.randomUUID().toString()).
+                        setObjectClass(objectClass).
+                        build()).
+                build());
     }
 
     @Override

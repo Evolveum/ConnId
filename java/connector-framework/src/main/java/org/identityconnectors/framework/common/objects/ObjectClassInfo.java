@@ -28,6 +28,7 @@ import static org.identityconnectors.framework.common.objects.NameUtil.nameHashC
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.identityconnectors.common.Assertions;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.framework.common.serializer.SerializerUtil;
