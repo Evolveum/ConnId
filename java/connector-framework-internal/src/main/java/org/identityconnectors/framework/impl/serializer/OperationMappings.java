@@ -26,6 +26,7 @@ package org.identityconnectors.framework.impl.serializer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ivy.ant.IvyMakePom;
 import org.identityconnectors.framework.api.operations.*;
 
 
@@ -65,5 +66,6 @@ class OperationMappings {
         "SyncApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(DiscoverConfigurationApiOp.class,
                 "DiscoverConfigurationApiOp"));
+        MAPPINGS.add(new ObjectTypeMapperImpl(ComplexUpdateDeltaApiOp.class, "ComplexUpdateDeltaApiOp"));
     }
 }
