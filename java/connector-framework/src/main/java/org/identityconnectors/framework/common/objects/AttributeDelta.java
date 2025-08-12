@@ -26,10 +26,7 @@ package org.identityconnectors.framework.common.objects;
 import static org.identityconnectors.framework.common.objects.NameUtil.nameHashCode;
 import static org.identityconnectors.framework.common.objects.NameUtil.namesEqual;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.StringUtil;
@@ -173,5 +170,21 @@ public class AttributeDelta extends BaseAttributeDelta {
         }
 
         return true;
+    }
+
+    @Override
+    public Attribute applyTo(Attribute attr) {
+        var values = attr != null ? new ArrayList<>(attr.getValue()) :  new ArrayList<>();
+        if (valuesToReplace != null) {
+            return new Attribute(getName(), List.copyOf(valuesToReplace));
+        }
+        var ret = new ArrayList<>(values);
+        if (valuesToRemove != null) {
+            ret.removeAll(valuesToRemove);
+        }
+        if (valuesToAdd != null) {
+            ret.addAll(valuesToAdd);
+        }
+        return new Attribute(getName(),ret);
     }
 }
