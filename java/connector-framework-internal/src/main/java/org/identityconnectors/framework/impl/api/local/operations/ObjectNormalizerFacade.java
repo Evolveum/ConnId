@@ -20,7 +20,6 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2010-2013 ForgeRock AS.
- * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.impl.api.local.operations;
 
@@ -28,14 +27,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
 import org.identityconnectors.common.Assertions;
-import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
-import org.identityconnectors.framework.common.objects.LiveSyncDelta;
-import org.identityconnectors.framework.common.objects.LiveSyncDeltaBuilder;
-import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.identityconnectors.framework.common.objects.SyncDelta;
-import org.identityconnectors.framework.common.objects.SyncDeltaBuilder;
+import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.common.objects.filter.AndFilter;
 import org.identityconnectors.framework.common.objects.filter.AttributeFilter;
 import org.identityconnectors.framework.common.objects.filter.ContainsAllValuesFilter;
@@ -121,6 +115,14 @@ public final class ObjectNormalizerFacade {
         return new ConnectorObject(orig.getObjectClass(), normalizeAttributes(orig.getAttributes()));
     }
 
+    public BaseObject normalizeObject(BaseObject orig) {
+        var attributes = normalizeAttributes(orig.getAttributes());
+        if (orig instanceof EmbeddedObject) {
+            return new EmbeddedObject(orig.getObjectClass(), attributes);
+        }
+        return new ConnectorObject(orig.getObjectClass(), attributes);
+    }
+
     /**
      * Returns the normalized sync delta.
      *
@@ -193,4 +195,5 @@ public final class ObjectNormalizerFacade {
             return filter;
         }
     }
+
 }

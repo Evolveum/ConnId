@@ -20,30 +20,14 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  * Portions Copyrighted 2017-2022 Evolveum
- * Portions Copyrighted 2024 ConnId
  */
 package org.identityconnectors.framework.impl.serializer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.identityconnectors.framework.api.operations.AuthenticationApiOp;
-import org.identityconnectors.framework.api.operations.CreateApiOp;
-import org.identityconnectors.framework.api.operations.DeleteApiOp;
-import org.identityconnectors.framework.api.operations.DiscoverConfigurationApiOp;
-import org.identityconnectors.framework.api.operations.GetApiOp;
-import org.identityconnectors.framework.api.operations.LiveSyncApiOp;
-import org.identityconnectors.framework.api.operations.ResolveUsernameApiOp;
-import org.identityconnectors.framework.api.operations.SchemaApiOp;
-import org.identityconnectors.framework.api.operations.ScriptOnConnectorApiOp;
-import org.identityconnectors.framework.api.operations.ScriptOnResourceApiOp;
-import org.identityconnectors.framework.api.operations.SearchApiOp;
-import org.identityconnectors.framework.api.operations.SyncApiOp;
-import org.identityconnectors.framework.api.operations.TestApiOp;
-import org.identityconnectors.framework.api.operations.UpdateApiOp;
-import org.identityconnectors.framework.api.operations.UpdateDeltaApiOp;
-import org.identityconnectors.framework.api.operations.ValidateApiOp;
-import org.identityconnectors.framework.api.operations.PartialSchemaApiOp;
+import org.identityconnectors.framework.api.operations.*;
+
 
 class OperationMappings {
 
@@ -67,5 +51,6 @@ class OperationMappings {
         MAPPINGS.add(new ObjectTypeMapperImpl(LiveSyncApiOp.class, "LiveSyncApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(DiscoverConfigurationApiOp.class, "DiscoverConfigurationApiOp"));
         MAPPINGS.add(new ObjectTypeMapperImpl(PartialSchemaApiOp.class, "PartialSchemaApiOp"));
+        MAPPINGS.add(new ObjectTypeMapperImpl(ComplexUpdateDeltaApiOp.class, "ComplexUpdateDeltaApiOp"));
     }
 }

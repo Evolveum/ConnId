@@ -26,10 +26,8 @@ package org.identityconnectors.framework.common.objects;
 import static org.identityconnectors.framework.common.objects.NameUtil.nameHashCode;
 import static org.identityconnectors.framework.common.objects.NameUtil.namesEqual;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.StringUtil;
 
@@ -79,12 +77,7 @@ import org.identityconnectors.common.StringUtil;
  * @author Radovan Semancik
  * @since 1.4.3
  */
-public class AttributeDelta {
-
-    /**
-     * Name of the attribute
-     */
-    private final String name;
+public class AttributeDelta extends BaseAttributeDelta {
 
     /**
      * Attribute values to add
@@ -105,11 +98,7 @@ public class AttributeDelta {
      * Create an attribute delta.
      */
     AttributeDelta(String name, List<Object> valuesToAdd, List<Object> valuesToRemove, List<Object> valuesToReplace) {
-        if (StringUtil.isBlank(name)) {
-            throw new IllegalArgumentException("Name must not be blank!");
-        }
-        // make this case insensitive
-        this.name = name;
+        super(name);
         // sanity
         if (valuesToReplace != null && (valuesToAdd != null || valuesToRemove != null)) {
             throw new IllegalArgumentException("Delta of attribute '" + name
@@ -121,8 +110,10 @@ public class AttributeDelta {
         this.valuesToReplace = (valuesToReplace == null) ? null : CollectionUtil.newReadOnlyList(valuesToReplace);
     }
 
+    // Needs to be present for backwards binary compatibility.
+    @Override
     public String getName() {
-        return this.name;
+        return super.getName();
     }
 
     public List<Object> getValuesToAdd() {
@@ -141,31 +132,13 @@ public class AttributeDelta {
      * Determines if the 'name' matches this {@link AttributeDelta}.
      */
     public boolean is(String name) {
-        return namesEqual(this.name, name);
-    }
-
-    @Override
-    public int hashCode() {
-        return nameHashCode(name);
-    }
-
-    @Override
-    public String toString() {
-        // poor man's consistent toString impl..
-        StringBuilder bld = new StringBuilder();
-        bld.append("Attribute: ");
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
-        map.put("Name", getName());
-        map.put("ValuesToAdd", getValuesToAdd());
-        map.put("ValuesToRemove", getValuesToRemove());
-        map.put("ValuesToReplace", getValuesToReplace());
-        extendToStringMap(map);
-        bld.append(map);
-        return bld.toString();
+        return super.is(name);
     }
 
     protected void extendToStringMap(final Map<String, Object> map) {
-        // Nothing to do here. Just for use in subclasses.
+        map.put("ValuesToAdd", getValuesToAdd());
+        map.put("ValuesToRemove", getValuesToRemove());
+        map.put("ValuesToReplace", getValuesToReplace());
     }
 
     @Override
@@ -174,20 +147,15 @@ public class AttributeDelta {
         if (this == obj) {
             return true;
         }
-        // test for null..
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
+
         // test that the exact class matches
         if (!(getClass().equals(obj.getClass()))) {
             return false;
         }
-        // test name field..
-        final AttributeDelta other = (AttributeDelta) obj;
-        if (!is(other.name)) {
-            return false;
-        }
-
+        var other = (AttributeDelta) (obj);
         if (!CollectionUtil.equals(valuesToAdd, other.valuesToAdd)) {
             return false;
         }
@@ -201,5 +169,21 @@ public class AttributeDelta {
         }
 
         return true;
+    }
+
+    @Override
+    public Attribute applyTo(Attribute attr) {
+        var values = attr != null ? new ArrayList<>(attr.getValue()) :  new ArrayList<>();
+        if (valuesToReplace != null) {
+            return new Attribute(getName(), List.copyOf(valuesToReplace));
+        }
+        var ret = new ArrayList<>(values);
+        if (valuesToRemove != null) {
+            ret.removeAll(valuesToRemove);
+        }
+        if (valuesToAdd != null) {
+            ret.addAll(valuesToAdd);
+        }
+        return new Attribute(getName(),ret);
     }
 }
