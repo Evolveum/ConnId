@@ -26,19 +26,13 @@ package org.identityconnectors.framework.impl.api.local.operations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.common.objects.filter.FilterVisitor;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.identityconnectors.common.CollectionUtil;
-import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
-import org.identityconnectors.framework.common.objects.ConnectorObjectBuilder;
-import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.identityconnectors.framework.common.objects.OperationOptions;
-import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
-import org.identityconnectors.framework.common.objects.ResultsHandler;
 import org.identityconnectors.framework.common.objects.filter.Filter;
 import org.identityconnectors.framework.common.objects.filter.FilterTranslator;
 import org.identityconnectors.framework.spi.Configuration;
@@ -189,7 +183,7 @@ public class SearchImplTests {
         }
 
         @Override
-        public boolean accept(ConnectorObject obj) {
+        public boolean accept(BaseObject obj) {
             return true;
         }
 

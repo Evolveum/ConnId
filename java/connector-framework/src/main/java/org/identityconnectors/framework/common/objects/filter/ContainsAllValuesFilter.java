@@ -26,6 +26,7 @@ package org.identityconnectors.framework.common.objects.filter;
 import java.util.List;
 
 import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.BaseObject;
 import org.identityconnectors.framework.common.objects.ConnectorObject;
 
 public class ContainsAllValuesFilter extends AttributeFilter {
@@ -55,7 +56,7 @@ public class ContainsAllValuesFilter extends AttributeFilter {
      * {@inheritDoc}
      */
     @Override
-    public boolean accept(ConnectorObject obj) {
+    public boolean accept(BaseObject obj) {
         Attribute found = obj.getAttributeByName(name);
         if (found != null) {
             // TODO: possible optimization using 'Set'
@@ -66,6 +67,12 @@ public class ContainsAllValuesFilter extends AttributeFilter {
             return value.containsAll(values);
         }
         return false;
+    }
+
+    // Important: Needs to be present for binary backwards compatibility
+    @Override
+    public boolean accept(ConnectorObject obj) {
+        return accept((BaseObject)  obj);
     }
 
     @Override
