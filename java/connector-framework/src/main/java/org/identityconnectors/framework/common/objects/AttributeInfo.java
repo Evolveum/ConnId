@@ -379,6 +379,10 @@ public final class AttributeInfo {
         return ConnectorObjectReference.class.equals(type);
     }
 
+    public boolean isEmbedded() {
+        return EmbeddedObject.class.equals(type);
+    }
+
     /**
      * Returns the description of this {@link Attribute}.
      * Can be used to determine the potential use of the {@link Attribute}.
