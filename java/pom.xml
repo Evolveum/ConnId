@@ -32,7 +32,7 @@
 
   <groupId>net.tirasa.connid</groupId>
   <artifactId>connid</artifactId>
-  <version>1.7.0.0-EVO-SNAPSHOT</version>
+  <version>1.7.0.0-EVOSNAPSHOT</version>
   <packaging>pom</packaging>
 
   <url>http://connid.tirasa.net/</url>
